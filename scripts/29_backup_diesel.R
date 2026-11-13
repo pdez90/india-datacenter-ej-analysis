@@ -129,7 +129,7 @@ ggsave(file.path(dir_paperfig, "fig_dcgrd_dcdistricts.png"), p2, width = 8.5, he
 p3 <- ggplot(sc, aes(factor(testing_h), pct_grid_nox, fill = factor(f))) + geom_col(position = position_dodge(0.75), width = 0.7) +
   geom_text(aes(label = sprintf("%.1f", pct_grid_nox)), position = position_dodge(0.75), vjust = -0.3, size = 3.4) +
   scale_fill_manual(values = c("0.2" = "#92C5DE", "0.4" = "#4393C3", "1" = "#2166AC"), name = "Feeder-quality\nfraction f") +
-  labs(title = NULL,   # caption: 4-14 g/kWh moves the central point over 2.9-10.1%
+  labs(title = NULL,   # caption: 4-14 g/kWh moves the central point over 2.8-9.9%
        x = "Scheduled testing (h/yr)", y = "Diesel NOx (% of grid-attributable marginal NOx)") + th
 ggsave(file.path(dir_paperfig, "fig_dcgrd_dieselvsgrid.png"), p3, width = 7.5, height = 4.6, dpi = 400, bg = "white")
 

@@ -3,7 +3,7 @@
 # -----------------------------------------------------------------------------
 # v2 = v1 (data/inventory_frozen_20260901.csv, the submitted paper's inventory)
 # plus the explicit, sourced edits in data/public/inventory_corrections_v2.csv,
-# found by re-finding every facility's sources on 30 Sep 2026 (see DATA.md and
+# found by re-finding every facility's sources on 30 Sep 2026 (see DATA.md in the companion app repository and
 # the public table). Every edit names the facility, the field, the old and the
 # new value, the reason and the evidence URL; nothing else changes.
 #   - 3 duplicate rows removed (IN251 STT Pune DC 1 directory copy; IN281 Tata
@@ -13,8 +13,8 @@
 #   - IN157 NTT Chennai 2: live 17.4 MW (building B is row IN110)
 #   - IN067 renamed: the 72 MW is the whole CtrlS Chennai park (DC1 + DC2)
 #   - build-out: IN003 AdaniConneX Chennai 1 33 MW; IN267 Sify Rabale 240 MW
-#   - 8 Kochi rows: district Alappuzha -> Ernakulam (01 honours dist_name_frozen
-#     as an explicit override where the point falls in no polygon)
+#   - 8 Kochi rows: district Alappuzha -> Ernakulam (in v2, 01 assigns districts from the site
+#     geocodes by point-in-polygon, with the nearest polygon within 3 km as the fallback)
 # Batch 2 (30 Sep 2026, second pass; `batch` column = 2), after a cross-check against the Atlas of
 # Data Center Politics and a re-check of every operator's own facility list:
 #   - 12 more duplicates removed: the 11 Tata Communications listings are STT GDC buildings (Tata sold

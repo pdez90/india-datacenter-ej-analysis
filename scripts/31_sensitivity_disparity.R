@@ -4,10 +4,8 @@
 # Reviewer request (10 Oct 2026). Compares the operating-scope InMAP results of the baseline run with
 # the sensitivity runs produced by scripts/run_sensitivity.R (DCEJ_SENS=<name>; 16b -> 16c -> 16d -> 20b
 # with suffixed outputs):
-#   alloc_gen    emissions placed on a state's plants in proportion to estimated 2017 generation
-#                (GPPD estimated_generation_gwh_2017) instead of nameplate capacity;
 #   w_flat       operator-class capacity weights 1:1:1:1:1 (load-state tonnes from 15c);
-#   w_hyper_only weights 30:3:0.5:1:1 (the scheme that moves the most load between states);
+#   w_hyper_only weights 30:3:1:1:0.5 (hyperscale:colocation:enterprise:government:telecom);
 #   unresolved_zero the 54 operating facilities the 24-25 Oct 2026 row review could not confirm carry
 #                no load, every other facility unchanged (no recalibration): their contribution alone.
 # Writes tab31_sensitivity_disparity.csv (long: run x contrast: ratio, Z, bootstrap sign probability),
@@ -16,7 +14,7 @@
 # =============================================================================
 source(file.path(Sys.getenv("DCEJ_ROOT", unset = (function(){a<-commandArgs(FALSE);f<-sub("^--file=","",grep("^--file=",a,value=TRUE));d<-if(length(f)) dirname(normalizePath(f[1])) else getwd();while(!file.exists(file.path(d,"scripts","00_config.R"))&&d!=dirname(d)) d<-dirname(d);d})()), "scripts", "00_config.R"))
 assert(DC_SCOPE == "operating", "31 runs on the operating scope")
-RUNS <- c(baseline = "", alloc_gen = "alloc_gen", w_flat = "w_flat", w_hyper_only = "w_hyper_only", unresolved_zero = "unresolved_zero")
+RUNS <- c(baseline = "", w_flat = "w_flat", w_hyper_only = "w_hyper_only", unresolved_zero = "unresolved_zero")
 num <- function(L, pat) as.numeric(sub(pat, "\\1", grep(pat, L, value = TRUE)[1]))
 rows <- list(); head <- list()
 for (nm in names(RUNS)) {

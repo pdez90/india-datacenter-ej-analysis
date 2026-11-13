@@ -4,7 +4,7 @@
 # Manuscript section 2.4 and SI sections S2-S3 (Tables S2.1, S2.2, S2.3; S3 text).
 #  (i)  all-India: hosting vs non-hosting districts, standardized difference
 #       d = (m1 - m0) / sqrt((v1 + v0) / 2)                       -> Table S2.1
-#  (ii) within-state: variables demeaned within the 17 hosting states (2015
+#  (ii) within-state: variables demeaned within the 25 hosting states (2015
 #       state labels, Telangana inside Andhra Pradesh); d as above; Welch p
 #  (iii) urban-only: hosting states, districts with NFHS urban share >= 0.30,
 #       demeaned within state; d and Welch p                      -> Table S2.2

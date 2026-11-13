@@ -104,7 +104,9 @@ msg("coal districts: %d; >= 1 GW: %d; district-assigned coal %.0f MW", env[coal_
 
 
 # ---- check against the frozen app layer -------------------------------------------------
-gold <- as.data.table(st_drop_geometry(st_read(file.path(dir_data, "golden", "districts.geojson"), quiet = TRUE)))
+golden_f <- file.path(dir_data, "golden", "districts.geojson")   # authors' frozen reference layer (not released)
+if (!file.exists(golden_f)) msg("skipping the check against the frozen layer: %s not found", golden_f) else {
+gold <- as.data.table(st_drop_geometry(st_read(golden_f, quiet = TRUE)))
 m <- merge(env, gold[, .(zone_uid, g_pm = pm25_acag_local, g_no2 = no2_surf, g_coal = coal_mw, g_df = dist_fossil_km)], by = "zone_uid")
 chk <- data.table(variable = c("pm25_acag_local", "no2_surf", "coal_mw", "dist_fossil_km"),
   max_abs_diff = c(max(abs(m$pm25_acag_local - m$g_pm), na.rm = TRUE), max(abs(m$no2_surf - m$g_no2), na.rm = TRUE),
@@ -123,5 +125,6 @@ if (is_v1) {   # same polygons as the frozen layer: must reproduce it exactly
   assert(chk[variable == "pm25_acag_local", cor] > 0.95, "ACAG district means disagree with the frozen layer (r < 0.95): check inputs")
   assert(chk[variable == "no2_surf", cor] > 0.8, "surface NO2 district means disagree with the frozen layer (r < 0.8): check the Anenberg files / cache")
 }
+}   # end of the check against the frozen layer
 # written only after the checks pass, so a bad input can never overwrite a good layer
 fwrite(env, file.path(dir_derived, "env_local_district.csv"))

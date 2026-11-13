@@ -46,14 +46,15 @@ GAS_RATIO <- c(so2 = 1 / 5750, nox = 1 / 57.5, pm25 = 1 / 230)   # gas : coal, n
 GAS_FRAC  <- GAS_RATIO / (1 + GAS_RATIO)
 STACK_M   <- c(Coal = 200, Gas = 100)
 dir.create(dir_inmap, showWarnings = FALSE)
-# The all-scope field only replaces the shared shapefile when asked (INMAP_ALLSCOPE=1),
-# so run_all.R cannot leave the all-scope field where the operating 16c expects its own.
+# Each scope writes its own shapefile (EMIS_TAG below carries _all for the all scope), so
+# run_all.R cannot leave the all-scope field where the operating 16c expects its own.
 export_only <- Sys.getenv("INMAP_EXPORT_ONLY") == "1"
 # Sensitivity runs (10 Oct 2026, reviewer request): DCEJ_SENS=<name> keeps every output of this
 # script apart from the baseline by suffixing file names with _<name> (see scripts/run_sensitivity.R).
 SENS <- Sys.getenv("DCEJ_SENS", ""); SFX <- if (nzchar(SENS)) paste0("_", SENS) else ""
 EMIS_TAG <- paste0(INVENTORY, if (DC_SCOPE == "all") "_all" else "", SFX)
 ALLOC_W <- if (SENS == "alloc_gen") "estimated_generation_gwh_2017" else "capacity_mw"   # plant allocation weight within a state
+# (alloc_gen is an optional extra variant; the paper does not report it and run_sensitivity.R does not run it)
 if (nzchar(SENS)) msg("SENSITIVITY RUN %s: allocation weight = %s", SENS, ALLOC_W)
 
 # ---- plants: GPPD India coal + gas, capacity > 0, state from the district polygons ----------

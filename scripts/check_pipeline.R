@@ -104,9 +104,9 @@ if (INVENTORY == "v2") {
 }
 
 # ---- 2c. dispersion sensitivity runs (run_sensitivity.R; Table S4.1.3, pinned 20 Oct 2026) ---------------------
-# 26 Oct 2026: four variants (unresolved_zero added); the 20 Oct pins were for the 340-row inventory, so the numeric pins are
-# NA (= report only) until the variants have been run on the corrected inventory, then pin them from tab16_inmap_summary_<run>.txt.
-SENS_RUNS <- c(alloc_gen = 0.0594, w_flat = 0.1011, w_hyper_only = 0.0540, unresolved_zero = 0.0530); SENS_DEATHS <- c(alloc_gen = 2047, w_flat = 3416, w_hyper_only = 1872, unresolved_zero = 1824)   # pinned 29 Oct 2026
+# Three variants, as reported in SI Table S4.1.3 (13 Nov 2026: the generation-weighted plant allocation was dropped from the
+# paper). An NA pin means report only.
+SENS_RUNS <- c(w_flat = 0.1011, w_hyper_only = 0.0540, unresolved_zero = 0.0530); SENS_DEATHS <- c(w_flat = 3416, w_hyper_only = 1872, unresolved_zero = 1824)   # pinned 29 Oct 2026
 for (f in c("tab31_sensitivity_disparity.csv", "tab31_sensitivity_summary.csv", "tab31_sensitivity_summary.txt",
             paste0("tab16_inmap_summary_", names(SENS_RUNS), ".txt"), paste0("tab20b_inmap_disparity_national_", names(SENS_RUNS), ".csv")))
   add(sprintf("[sensitivity] %s", f), if (file.exists(O(f))) "PASS" else "MISSING")
@@ -123,8 +123,7 @@ if (INVENTORY == "v2" && all(file.exists(O(paste0("tab16_inmap_summary_", names(
     t31 <- fread(O("tab31_sensitivity_summary.csv")); nb <- fread(O("tab20b_inmap_disparity_national.csv"))   # wide: ratio_<run>, boot_sign_prob_<run>
     m <- merge(t31, nb[, .(contrast, ratio)], by = "contrast")
     chk("31 baseline column = 20b national ratios", nrow(m) == 10 && max(abs(m$ratio_baseline - m$ratio)) < 1e-6)
-    chk("31 alloc_gen = baseline (GPPD generation is capacity x fuel CF)", max(abs(t31$ratio_alloc_gen - t31$ratio_baseline)) < 1e-3)
-    for (rn in setdiff(names(SENS_RUNS), "alloc_gen")) if (paste0("ratio_", rn) %in% names(t31))
+    for (rn in names(SENS_RUNS)) if (paste0("ratio_", rn) %in% names(t31))
       chk(sprintf("31 %s max |ratio change| vs baseline = %.3f (pinned 29 Oct 2026: w_flat 0.158, w_hyper_only 0.048, unresolved_zero 0.013)", rn, max(abs(t31[[paste0("ratio_", rn)]] - t31$ratio_baseline))),
           abs(max(abs(t31[[paste0("ratio_", rn)]] - t31$ratio_baseline)) - c(w_flat = 0.158, w_hyper_only = 0.048, unresolved_zero = 0.013)[[rn]]) < 0.005)
   }

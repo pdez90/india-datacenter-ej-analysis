@@ -9,6 +9,7 @@
 #   Rscript scripts/run_all.R --from 16d                      # start at the first step whose name begins "16d"
 #   Rscript scripts/run_all.R --from 16d --until 23           # ... and stop after the step beginning "23"
 #   Rscript scripts/run_all.R --skip 04,05                    # skip steps whose raw inputs are not on this machine
+#                                                             #   ("04" also skips 04b, "05" also skips 05e)
 # Each step runs in a fresh process (so a failed invariant stops the run); R and Python steps alike.
 # A one-line record per step (exit status, seconds) goes to outputs/run_logs/run_all_<date>.log, and
 # the full console output to outputs/run_logs/run_all_<date>_console.log when launched as in README.
@@ -87,6 +88,10 @@ steps <- list(
   list("22b_inmap_grid.R",        O),     # InMAP grid cut into district pieces for the app's Air-quality model tab
   list("check_pipeline.R",        O)      # registry of invariants and published values
 )
+step_names <- vapply(steps, `[[`, "", 1)
+for (k in c(from, until)) if (nzchar(k) && !any(startsWith(step_names, k)))
+  stop(sprintf("no step name begins with '%s'; steps are: %s", k, paste(step_names, collapse = ", ")))
+skip_step <- function(nm) any(vapply(skip, function(k) grepl(sprintf("^%s[a-z]?_", k), nm), TRUE))
 started <- from == ""
 for (s in steps) {
   nm <- s[[1]]
@@ -94,7 +99,7 @@ for (s in steps) {
   if (!started) next
   done_after <- nzchar(until) && startsWith(nm, until)
   run_it <- !(skip_gee && nm == "03_gee_extract.R") && !(skip_inmap && startsWith(nm, "16c_")) &&
-            !any(startsWith(nm, paste0(skip, "_")))
+            !skip_step(nm)
   if (run_it && !file.exists(file.path(sdir, nm))) stop(sprintf("step %s: script not found in %s", nm, sdir))
   if (run_it) for (sc in s[[2]]) {
     cat(sprintf("\n==== %s  [DC_SCOPE=%s]\n", nm, sc))

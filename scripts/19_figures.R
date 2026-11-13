@@ -48,7 +48,7 @@ p2 <- base_map() + geom_sf(data = dist, fill = "grey96", colour = "grey85", line
   geom_sf(data = cp, aes(size = N), shape = 21, fill = "#2166ac", colour = "white", alpha = 0.85) +
   geom_segment(data = lab_df, aes(x = x, y = y, xend = lx, yend = ly), colour = "grey45", linewidth = 0.3) +
   geom_text(data = lab_df, aes(x = lx, y = ly, label = label), size = 3.3, hjust = -0.05, fontface = "bold", colour = "grey15") +
-  scale_size_area(max_size = 14, breaks = c(1, 5, 15, 30), name = "Operating\nfacilities")   # 246 facilities in 61 of 641 districts (caption)
+  scale_size_area(max_size = 14, breaks = c(1, 5, 15, 30), name = "Operating\nfacilities")   # 233 facilities in 61 of 641 districts (caption)
 save(p2, "ms_fig2_concentration.png", 8.5, 9.2)
 
 # ---- Figure 1: inventory flow (v2) is drawn by scripts/19b_figure1.py (matplotlib; counts read from the same tables) ----
@@ -64,7 +64,7 @@ pS11 <- base_map() + geom_sf(data = dist, fill = "grey97", colour = "grey88", li
   geom_sf(data = gsf, aes(colour = cls), size = 1.4, alpha = 0.8) +
   scale_colour_manual(values = c("Site (building)" = "#2166ac", "Site (campus / IT park)" = "#4393c3", "Locality" = "#d6604d", "City only" = "#4daf4a",
                                  "City centroid (directory)" = "#d6604d", "City centroid (census / added records)" = "#2166ac", "Named locality" = "#4daf4a"), name = NULL) +
-  labs(title = NULL)   # caption: 246 operating facilities on 220 distinct points, jittered ~9 km
+  labs(title = NULL)   # caption: 233 operating facilities on 212 distinct points, jittered ~9 km
 save(pS11, "ms_geocode_provenance.png", 8.5, 9)
 fwrite(gp[, .(facilities = .N, distinct_points = uniqueN(paste(lon, lat))), by = cls], out("tab19_geocode_provenance.csv"))
 

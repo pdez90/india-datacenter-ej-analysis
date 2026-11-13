@@ -18,7 +18,7 @@ source_snapshots/manifest.csv:
 PDFs that the source itself serves (annual reports, parliament answers) are downloaded as they are.
 
 The snapshots are third-party pages: keep source_snapshots/ OUT of the public repository (it is evidence
-held by the authors, available on request). DATA.md says so.
+held by the authors, available on request). DATA.md in the companion app repository says so.
 
 Run from the project root:   python3 scripts/27_snapshot_sources.py          # the pages no web archive would take
                              python3 scripts/27_snapshot_sources.py --all    # every cited source URL

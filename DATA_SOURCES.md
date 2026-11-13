@@ -8,8 +8,8 @@ in this repository.
 
 | Dataset | Used for | Access | Version / retrieved | Script |
 |---|---|---|---|---|
-| DataCenterMap directory, India | Base list of facilities | https://www.datacentermap.com/india/ (34 city listings) | Retrieved 31 August 2026; entries re-checked 30 September 2026 | Inventory construction before 1 Sep 2026 (see README); 00b_inventory_v2.R applies the later corrections |
-| Operator facility lists (15 operator groups) | Operator census | Operator websites; every URL is in the public facility table | Retrieved 30 August 2026; re-checked 30 September 2026 | Inventory construction before 1 Sep 2026 (see README); 00b_inventory_v2.R |
+| DataCenterMap directory, India | Base list of facilities | https://www.datacentermap.com/india/ (34 city listings) | Retrieved 31 August 2026; every entry checked against its sources again by the 30 September 2026 cut-off | Inventory construction before 1 Sep 2026 (see README); 00b_inventory_v2.R applies the later corrections |
+| Operator facility lists (15 operator groups) | Operator census | Operator websites; every URL is in the public facility table | Retrieved 30 August 2026; checked again by the 30 September 2026 cut-off | Inventory construction before 1 Sep 2026 (see README); 00b_inventory_v2.R |
 | Government data-center pages (NIC/NICSI, UIDAI, ISRO, CRIS, state data centres) | Government census | Official pages; every URL is in the public facility table | Compiled 30 September 2026 | 00b_inventory_v2.R |
 | Press, filings, rating rationales and other sources cited per facility | Status, capacity and second sources | Every URL and its archived copy is in the public facility table | Up to 30 September 2026 (cut-off) | 24_public_inventory.R |
 | Atlas of Data Center Politics, version 1.0 | Cross-check only | https://www.atlasofdatacenterpolitics.com/ | File dated 29 September 2026 | 24_public_inventory.R |
@@ -23,7 +23,7 @@ in this repository.
 
 | Dataset | Used for | Access | Version | Script |
 |---|---|---|---|---|
-| Census 2011 district boundaries (DataMeet) | District layer (641 districts) | https://github.com/datameet/maps (Districts/Census_2011; CC BY 2.5 IN) | Census 2011 | 00a_districts.R |
+| Census 2011 district boundaries (DataMeet) | District layer (641 districts) | https://github.com/datameet/maps (Districts/Census_2011; CC BY 2.5 IN), pinned to commit 5ea9037 | Census 2011 | 00a_districts.R |
 | NFHS-5 district identifiers | Joining districts to the survey | Distributed with NFHS-5 (DHS Program) | 2019-21 | 00a_districts.R |
 | GHSL population and built-up volume, R2023A | Population weights, urban form | Earth Engine `JRC/GHSL/P2023A/GHS_POP/2020`, `JRC/GHSL/P2023A/GHS_BUILT_V/2020` | 2020 | 03_gee_extract.R |
 | WorldPop India 2020 | Gridded population (supplementary) | Earth Engine `WorldPop/GP/100m/pop` | 2020 | 03_gee_extract.R |
@@ -83,3 +83,27 @@ in this repository.
 | Anthropic Economic Index, India brief | State shares of Claude.ai use | https://www.anthropic.com/research/india-brief-economic-index | 16 February 2026 | 21_benefit_burden.R |
 | Value of a statistical life | Monetized ledger | Viscusi and Masterman (2017); Majumder and Madheswaran (2018) | 2020 US$ | 23_monetised_ledger.R |
 | Social cost of carbon | Monetized ledger | Ricke et al. (2018); U.S. EPA (2023) | 2020 US$ | 23_monetised_ledger.R |
+
+## The authors' own input tables
+
+These tables were compiled by the authors. They live in `data/` and are not in this repository. "Companion
+repository" means https://github.com/pdez90/india-datacentre-ej. The others are available from the authors on
+request; everything they contain that bears on a facility (sources, corrections, statuses, capacities, coordinates
+with precision class) is reported row by row in the public facility table.
+
+| File | Contents | Released | Script |
+|---|---|---|---|
+| `data/inventory_frozen_20260901.csv` | The inventory as it stood on 1 September 2026 (see README) | On request | 00b_inventory_v2.R |
+| `data/public/inventory_corrections_v2.csv` | 339 documented corrections (29 removals, 310 field edits), each with reason and evidence URL | Reported in the public table (`correction_applied`, `correction_evidence`); file on request | 00b_inventory_v2.R, 24_public_inventory.R |
+| `data/public/inventory_additions_v2.csv` | Facilities added after 1 September 2026, with sources | Rows are in the public table; file on request | 00b_inventory_v2.R |
+| `data/facility_geocodes_v2.csv` | Site geocode, address, method and precision for each facility | Coordinates and precision class are in the public table; file on request | 01_inventory.R |
+| `data/public/facility_district_changes_v2.csv` | District reassignments from the site geocodes | On request | 01_inventory.R |
+| `data/public/inventory_sources_20260930.csv`, `inventory_issues_20260930.csv` | Source records and open issues per facility | Reported in the public table; files on request | 24_public_inventory.R |
+| `data/public/adp_match_by_row.csv` | Match to the Atlas of Data Center Politics for each facility | In the public table (`adp_*` columns) | 24_public_inventory.R |
+| `data/public/unresolved_facilities_20261025.csv` | The 75 facilities that public sources neither confirm nor refute | Companion repository (`data/unresolved_facilities.csv`, with current status and MW) | 16b_build_emissions.R (unresolved_zero run) |
+| `data/public/plant_corrections.csv` | Corrected coordinates of one GPPD plant (Solapur) | On request; the correction is stated in SI section S12 | 04_env_local.R, 16b_build_emissions.R |
+| `data/india_grid_params.csv` | Capacity anchors, PUE, utilization, WUE and grid water factors (low, central, high) | Values are in SI Table S4.2; file on request | 13, 15, 15c, 32 |
+| `data/state_dc_policies.csv`, `data/state_dc_policies_sources.csv` | State policy compilation and its sources | Companion repository (`data/policies.csv`, `data/policy_sources.csv`) | 14_policy_table.R |
+| `data/sengupta_mef_flatload.csv`, `sengupta_mef_long.csv`, `sengupta_mef_flatload_tableS43.csv` | Marginal emission factors derived from Sengupta et al. (2022) | Rebuilt by 15a_mef_kilthub.R from the KiltHub files; Table S4.3 in the SI | 15a, 15b, 32 |
+| `data/ixp_india_peeringdb_20261003.csv` | The 42 internet exchange points in 13 cities used for the connectivity models (from PeeringDB, 3 October 2026) | On request; PeeringDB is public | 17_siting_robustness.R |
+| `data/golden/*.geojson` | The authors' frozen reference layers from the 1 September 2026 pipeline | Not released; the comparisons that read them are skipped when absent | 03, 04, 04b, 05, 05e, 06 (v1 only), 15 and 16b (v1 only), 16d, 16e, 20b, 21 |

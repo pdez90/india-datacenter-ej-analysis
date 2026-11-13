@@ -24,7 +24,7 @@
 #        exactly), but the single categories SC, ST, OBC and General use valid
 #        responses (1-4) as denominator: this reproduces Table 1's ST shares
 #        (0.046 / 0.148 / 0.080) and the SC/OBC subgroup burdens of 13_burden.
-#        The inconsistency is inherited from the original and noted in README.
+#        The inconsistency is inherited from the original and noted in README.md (Known limitations).
 #   sh75 BPL card 1 yes, 0 no, 8 don't know -> share among 0/1 only
 #   hv271 wealth-index factor score (5 implied decimals; kept in raw units)
 #   hv270 wealth quintile 1 poorest .. 5 richest
@@ -86,7 +86,9 @@ assert(nrow(ses) >= 630, "too few districts with NFHS-5 data")
 fwrite(ses, file.path(dir_derived, "nfhs5_district.csv"))
 
 # ---- check against the frozen app layer -------------------------------------------------
-g <- as.data.table(st_drop_geometry(st_read(file.path(dir_data, "golden", "districts.geojson"), quiet = TRUE)))
+golden_f <- file.path(dir_data, "golden", "districts.geojson")   # authors' frozen reference layer (not released)
+if (!file.exists(golden_f)) { msg("skipping the check against the frozen layer: %s not found", golden_f); quit(save = "no", status = 0) }
+g <- as.data.table(st_drop_geometry(st_read(golden_f, quiet = TRUE)))
 m <- merge(ses, g[, .(zone_uid, g_w = wealth_mean_2019, g_u = urban_share_2019, g_s = share_scst_2019,
                       g_b = share_bpl_2019, g_m = share_muslim_2019, g_e = share_no_electricity_2019)], by = "zone_uid")
 chk <- data.table(variable = c("wealth","urban","scst","bpl","muslim","no_elec"),

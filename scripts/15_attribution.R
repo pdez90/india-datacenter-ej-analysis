@@ -36,7 +36,6 @@ COMMERCIAL    <- c("hyperscale", "colocation")
 gp  <- fread(path_grid_params)
 par <- function(name, lvl = "central") { v <- gp[param == name][[lvl]]; assert(length(v) == 1, "param %s missing", name); as.numeric(v) }
 
-inv_all <- fread(outp("dc_current_inventory.csv", "all"))          # 340 rows (v2), both scopes' inputs
 inv     <- fread(out("dc_current_inventory.csv"))                  # this scope
 assert(all(inv$dc_type %in% names(CLASS_WEIGHTS)), "unknown dc_type in inventory")
 

@@ -5,12 +5,14 @@
 # Re-runs the 15 allocation under five alternative weightings (hyperscale :
 # colocation : enterprise : telecom) and recomputes each state's share of
 # attributable marginal SO2, NOx and primary PM2.5 (load state, 2015 geography,
-# Hyderabad in Andhra Pradesh), pollutants kept separate. The commercial total is
+# Telangana separate in v2; Hyderabad in Andhra Pradesh in v1), pollutants kept separate. The commercial total is
 # fixed at the anchor by construction; the derived non-commercial component is not.
 #   (hyperscale : colocation : enterprise : telecom, as in SI S4)
 #   baseline 10:3:1:0.5 | flat 1:1:1:1 | compressed 5:2:1:0.5 | stretched 20:4:1:0.25
 #   colo_led 6:6:1:0.5  | hyper_only 30:3:1:0.5
-# v1 inventory values (30 Sep 2026; current v2 results: SI Table S4.1.3 and tab15c_*): max pp flat 7.81/7.61/8.30,
+# Current v2 results (SI Table S4.4, Figure S4.2): baseline 251.3 non-commercial MW, four-state SO2 share
+# 61.4%; largest change 8.9 pp (flat, NOx); mean absolute change <= 1.4 pp.
+# v1 inventory values (30 Sep 2026): max pp flat 7.81/7.61/8.30,
 # compressed 2.72/2.64/2.88, stretched 4.10/3.98/4.36, colo_led 6.59/6.65/7.22,
 # hyper_only 10.86/10.63/11.64 (SO2/NOx/PM2.5).
 # Golden (v1): largest single state-share change 11.6 pp (hyper_only, PM2.5); mean
@@ -74,7 +76,8 @@ summ[, `:=`(derived_noncommercial_mw = vapply(scheme, function(s) runs[[s]]$deri
             total_mw = vapply(scheme, function(s) runs[[s]]$total_mw, 0))]
 print(summ, digits = 3)
 fwrite(summ, out("tab15c_weight_summary.csv"))
-ap <- sens[state == "Andhra Pradesh" & scheme %in% c("baseline", "hyper_only"), .(scheme, so2 = 100 * so2_share, nox = 100 * nox_share, pm25 = 100 * pm25_share)]
+ap_state <- if (is_v1) "Andhra Pradesh" else "Telangana"   # the state that holds Hyderabad
+ap <- sens[state == ap_state & scheme %in% c("baseline", "hyper_only"), .(scheme, so2 = 100 * so2_share, nox = 100 * nox_share, pm25 = 100 * pm25_share)]
 print(ap, digits = 3)
 if (DC_SCOPE == "operating") {
   assert(abs(summ[scheme == "baseline", derived_noncommercial_mw] - G(204.7, 251.32)) < 0.5, "baseline derived MW should be %.1f", G(204.7, 251.32))

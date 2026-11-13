@@ -1,7 +1,7 @@
 # =============================================================================
 # run_sensitivity.R  —  the reviewer-requested dispersion sensitivity runs (operating scope)
 # -----------------------------------------------------------------------------
-#   Rscript scripts/run_sensitivity.R                 # all four runs (about 6-7 h of InMAP each)
+#   Rscript scripts/run_sensitivity.R                 # the three runs in the paper (about 6-7 h of InMAP each)
 #   Rscript scripts/run_sensitivity.R --only w_flat   # one run
 #   Rscript scripts/run_sensitivity.R --compile       # only 31 (after the runs)
 # Each run sets DCEJ_SENS=<name> and executes 16b -> 16c -> 16d -> 20b; every output file is suffixed
@@ -18,7 +18,7 @@ run <- function(script, env = character()) {
   st <- system2(rscript, file.path(sdir, script), env = c("DC_SCOPE=operating", env), stdout = "", stderr = "")
   if (st != 0) stop(sprintf("%s failed (%s)", script, paste(env, collapse = " ")))
 }
-RUNS <- c("alloc_gen", "w_flat", "w_hyper_only", "unresolved_zero")
+RUNS <- c("w_flat", "w_hyper_only", "unresolved_zero")   # SI Table S4.1.3
 if ("--only" %in% args) RUNS <- args[which(args == "--only") + 1]
 if (!"--compile" %in% args) {
   run("15c_weight_sensitivity.R")

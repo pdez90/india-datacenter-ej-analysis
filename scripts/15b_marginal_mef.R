@@ -9,7 +9,7 @@
 # regression path. Factors: data/sengupta_mef_flatload.csv from 15a
 # (full precision); otherwise the rounded SI Table S4.3 with a warning.
 # Golden v1 (operating): 14.65 Mt CO2, 109.8 kt SO2, 58.66 kt NOx, 8.10 kt PM2.5.
-# v2 (20 Oct 2026, current): 15.1 Mt, 113.39 / 59.88 / 8.48 kt; all scope 46.84 Mt.
+# v2 (final inventory, current): 15.03 Mt, 111.50 / 59.96 / 8.42 kt (SO2 / NOx / PM2.5); all scope 60.29 Mt.
 # (v1 Table S4.3 fallback: 14.65 / 109.7 / 58.4 / 8.14; v1 all scope 38.2 Mt CO2.)
 # THIS table (not tab15_national's tier-median scalar) is the authoritative
 # marginal estimate.

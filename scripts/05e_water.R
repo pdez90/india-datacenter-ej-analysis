@@ -6,7 +6,7 @@
 # bwd_raw = depletion, gtd_raw = groundwater-table decline (cm/yr).
 #   Facility points: the sub-basin value at each facility (the paper's unit):
 #     extremely high = bws_raw >= 0.8; high or worse = bws_raw >= 0.4.
-#     Current (v2, operating): 153 of 246 (62%) >= 0.8; 172 (70%) >= 0.4.
+#     Current (v2, operating): 144 of 233 (62%) >= 0.8; 160 (69%) >= 0.4.
 #   Districts: area-weighted mean of sub-basin values (policy table, maps).
 #     Checked against the frozen bws_raw layer.
 #

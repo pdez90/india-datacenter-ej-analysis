@@ -17,18 +17,18 @@
 # the geocoded point. This script rebuilds everything downstream from it.
 #
 # Site geocodes (v2, 3 Oct 2026): the frozen inventory placed most facilities on a city centroid
-# (340 facilities on 66 points). v2 replaces every point with a site geocode from
+# (66 distinct points). v2 replaces every point with a site geocode from
 # data/facility_geocodes_v2.csv (address, address source, method and precision: building / campus /
-# locality / city; 35 rows remain city-level). geocode_class carries that precision.
+# locality / city; 30 of the 329 rows keep a city placeholder). geocode_class carries that precision.
 # District assignment (v2): point-in-polygon on the Census 2011 district boundaries (00a_districts.R).
 # District assignment (v1): point-in-polygon on the 2015 NFHS districts; points in
 # no polygon (the Kochi city centroid) take the nearest district, as in 01d.
 # Hard-stop identities are re-asserted for the active inventory (00_config INVENTORY):
 #   v1 (submitted paper): 209 operating in 31 districts; 297 in 37; 61 census + 148 DCM operating.
-#   v2 (revised 30 Sep 2026, default): 246 operating in 52 districts; 340 in 57;
-#       operating sources 61 census + 135 DCM + 18 cross-check + 32 government census.
-# v2 note: where a point falls in no polygon, the district recorded in dist_name_frozen
-# (Ernakulam for the 8 Kochi rows) is used instead of the nearest polygon.
+#   v2 (default; final inventory): 233 operating in 61 districts; 329 in 66;
+#       operating sources 62 census + 123 DCM + 16 cross-check + 32 government census.
+# v2 note: a site geocode that falls in no polygon takes the nearest Census 2011 polygon, which
+# must lie within 3 km (otherwise the run stops); none occurs in the final inventory.
 # =============================================================================
 source(file.path(Sys.getenv("DCEJ_ROOT", unset = (function(){a<-commandArgs(FALSE);f<-sub("^--file=","",grep("^--file=",a,value=TRUE));d<-if(length(f)) dirname(normalizePath(f[1])) else getwd();while(!file.exists(file.path(d,"scripts","00_config.R"))&&d!=dirname(d)) d<-dirname(d);d})()), "scripts", "00_config.R"))
 

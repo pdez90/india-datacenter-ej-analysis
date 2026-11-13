@@ -2,9 +2,9 @@
 # 32_si_descriptives.R  —  SI numbers that are derived from pipeline outputs rather than
 # produced by a modelling step (operating inventory):
 #   A. SI S4: capacity-weighted profile of the coal-generating districts vs the facility-weighted
-#      hosting districts (133 districts, 409 M people; Singrauli ... Korba; wealth 84,400 = 53rd pct).
+#      hosting districts (133 districts, 414 M people; Singrauli ... Korba; wealth 84,400 = 53rd pct).
 #   B. SI S4: electricity-related water at the thermal marginal mix (92% coal, 8% gas; coal 3.0 and
-#      gas 0.92 L/kWh, Table S4.2) instead of the average grid (74.0 -> 57.2 GL/yr).
+#      gas 0.92 L/kWh, Table S4.2) instead of the average grid (73.7 -> 57.0 GL/yr).
 #   C. SI S4: unweighted mean of the ten season-period Sengupta factors vs the flat-load factors
 #      (+1.6-2.6% attributable emissions).
 #   D. SI S1.1.5: the four flagged operating loads (IN070, IN075, IN102, IN103) treated as modelled
@@ -40,8 +40,8 @@ add("percentile of the coal-district wealth mean among districts", 100 * mean(fr
 nat <- fread(out("tab15_national.csv")); e_twh <- sum(fread(out("tab15_facilities.csv"))$e_fac_gwh) / 1e3
 thermal_l_kwh <- 0.92 * 3.0 + 0.08 * 0.92
 gp <- fread(file.path(dir_data, "india_grid_params.csv"))
-add("scope 2 water at the average grid (GL/yr)", e_twh * gp[param == "grid_water_l_per_kwh", as.numeric(central)], "74.0")
-add("scope 2 water at the thermal marginal mix (GL/yr)", e_twh * thermal_l_kwh, "57.2")
+add("scope 2 water at the average grid (GL/yr)", e_twh * gp[param == "grid_water_l_per_kwh", as.numeric(central)], "73.7")
+add("scope 2 water at the thermal marginal mix (GL/yr)", e_twh * thermal_l_kwh, "57.0")
 
 # ---- C. unweighted vs flat-load marginal factors --------------------------------------------
 long <- fread(file.path(dir_data, "sengupta_mef_long.csv"))

@@ -33,8 +33,8 @@ if (ROOT == "") {
 ROOT <- normalizePath(ROOT)
 
 # ---- scope switch ------------------------------------------------------------
-#   operating : the operating facilities (primary; every result in the paper): v2 246, v1 209
-#   all       : stock plus pipeline (scenario): v2 340, v1 297
+#   operating : the operating facilities (primary; every result in the paper): v2 233, v1 209
+#   all       : stock plus pipeline (scenario): v2 329, v1 297
 DC_SCOPE <- Sys.getenv("DC_SCOPE", unset = "operating")
 stopifnot(DC_SCOPE %in% c("operating", "all"))
 
@@ -42,7 +42,7 @@ stopifnot(DC_SCOPE %in% c("operating", "all"))
 #   v2 : REVISED inventory (30 Sep 2026; default). Built by 00b_inventory_v2.R from v1 plus the
 #        explicit, sourced edits in data/public/inventory_corrections_v2.csv and the additions in
 #        inventory_additions_v2.csv (government data centres; Atlas-noticed sites, each primary-sourced).
-#        246 operating facilities in 61 districts; 340 with the pipeline (66 districts).
+#        233 operating facilities in 61 districts; 329 with the pipeline (66 districts).
 #   v1 : the inventory of the submitted paper (frozen 1 Sep 2026; 209 / 31; 297 / 37).
 #        Its file is kept only as the input that 00b_inventory_v2.R corrects; it is not run on its own.
 INVENTORY <- Sys.getenv("DCEJ_INVENTORY", unset = "v2")

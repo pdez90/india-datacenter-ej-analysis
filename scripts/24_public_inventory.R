@@ -1,8 +1,8 @@
 # =============================================================================
 # 24_public_inventory.R  —  the public, sourced facility table for the website
 # -----------------------------------------------------------------------------
-# One row per facility of the active inventory (v2, revised 30 Sep 2026: 340 rows,
-# 246 operating, 56 under construction, 38 announced), exactly as analysed, with:
+# One row per facility of the active inventory (v2, final inventory: 329 rows,
+# 233 operating, 60 under construction, 36 announced), exactly as analysed, with:
 #   * where the row came from and a source URL (plus a second one where one was
 #     found), re-found and checked 30 Sep 2026;
 #   * every published capacity figure found, which one the paper uses, what it

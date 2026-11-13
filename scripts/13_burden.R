@@ -14,8 +14,8 @@
 #    Reproduces (20 Oct 2026, v2 inventory): 61 districts, 243.6 M, 285,253 deaths;
 #    all-India 1,707,861.
 # B. Facility scope-1 (on-site) water x Aqueduct sub-basin class at the facility
-#    point (05e). Current: 14.1 GL/yr (3.9-23.5 across WUE 0.5-3.0) = 62% of
-#    22.7 GL in extremely-high-stress basins; 44.5 GL at 6.5 GW by 2030.
+#    point (05e). Current: 14.2 GL/yr in extremely-high-stress basins (3.9-23.6 across
+#    WUE 0.5-3.0) = 63% of the 22.6 GL scope-1 total; about 45 GL at 6.5 GW by 2030.
 # =============================================================================
 source(file.path(Sys.getenv("DCEJ_ROOT", unset = (function(){a<-commandArgs(FALSE);f<-sub("^--file=","",grep("^--file=",a,value=TRUE));d<-if(length(f)) dirname(normalizePath(f[1])) else getwd();while(!file.exists(file.path(d,"scripts","00_config.R"))&&d!=dirname(d)) d<-dirname(d);d})()), "scripts", "00_config.R"))
 

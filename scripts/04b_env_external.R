@@ -118,8 +118,10 @@ pick_layer <- function(r, pattern) {          # first layer whose name matches, 
 
 d4 <- st_transform(read_districts(), 4326)
 res <- data.table(zone_uid = d4$zone_uid)
-gold <- as.data.table(st_drop_geometry(st_read(file.path(dir_data, "golden", "districts.geojson"), quiet = TRUE)))
+golden_f <- file.path(dir_data, "golden", "districts.geojson")   # authors' frozen reference layer (not released)
+gold <- if (file.exists(golden_f)) as.data.table(st_drop_geometry(st_read(golden_f, quiet = TRUE))) else NULL
 compare <- function(new, var) {      # informational: the frozen layer was computed on the warped NFHS polygons
+  if (is.null(gold)) return(invisible(NULL))   # reference layer not available: skip the comparison
   g <- merge(res[, .(zone_uid, a = get(new))], gold[, .(zone_uid, b = get(var))], by = "zone_uid")[is.finite(a) & is.finite(b)]
   msg("%s vs frozen %s: n %d, r %.4f, median ratio %.4f, max |diff| %.3f", new, var, nrow(g), cor(g$a, g$b), median(g$a / g$b), max(abs(g$a - g$b)))
 }

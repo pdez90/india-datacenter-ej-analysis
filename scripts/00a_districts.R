@@ -25,7 +25,8 @@ source(file.path(Sys.getenv("DCEJ_ROOT", unset = (function(){a<-commandArgs(FALS
 sf_use_s2(FALSE)
 
 DM_DIR <- file.path(dir_data, "raw", "datameet_census2011")
-DM_URL <- "https://raw.githubusercontent.com/datameet/maps/master/Districts/Census_2011/2011_Dist.%s"
+# Pinned to commit 5ea9037 (22 May 2014), the commit whose four files match the checksums below.
+DM_URL <- "https://raw.githubusercontent.com/datameet/maps/5ea90379e67dece749b01448ca438161a3534b79/Districts/Census_2011/2011_Dist.%s"
 DM_SHA <- c(shp = "3636e627a519f67b4615b6a97df48c2b279e8c7b2566d3bfbc3eda1d06e33206",
             shx = "12b6028dfac9e3f20686b3d0a44f9d3989acfdb3f3cda853881d1cf2d8579eab",
             dbf = "2c7b03578fdf41a4c4e29941a564fa90bf0b0e4f865f5e54481ef7ac8494eb7d",

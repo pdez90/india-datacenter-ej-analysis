@@ -51,7 +51,7 @@ if (file.exists(ext_f)) add(fread(ext_f)[, !"rwi_tiles"], "04b_env_external.R (L
 aq_f <- file.path(dir_derived, "aqueduct_district.csv")
 if (file.exists(aq_f)) add(fread(aq_f)[, .(zone_uid, bws_raw = bws_raw_aq)], "05e_water.R (WRI Aqueduct 4.0 district baseline water stress)")
 
-# ---- Earth Engine exports (03_gee_district_exports.js) -----------------------------------
+# ---- Earth Engine exports (03_gee_extract.R) -----------------------------------
 gee_files <- list.files(dir_gee, pattern = "^gee_.*\\.csv$", full.names = TRUE)
 for (f in gee_files) {
   g <- fread(f); keep <- setdiff(names(g), c("system:index", ".geo", "dist_name", "state_name", "dist_code"))

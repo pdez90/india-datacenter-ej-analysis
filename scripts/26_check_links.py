@@ -15,7 +15,7 @@ Pages that block automated checks (Data Center Map does) are marked `blocked`: o
 Run from the project root:   python3 scripts/26_check_links.py
 Standard library only. It waits ~1.5 s between requests and never sends anything but a page request.
 """
-import csv, gzip, html, os, re, sys, time, urllib.error, urllib.request, zlib
+import csv, gzip, html, os, re, time, urllib.error, urllib.request, zlib
 from datetime import datetime, timezone
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

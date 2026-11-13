@@ -27,7 +27,7 @@
 #   INMAP_SKIP_PREFLIGHT=1 Rscript scripts/16c_run_inmap.R
 #
 # Golden (run 3, v1 inventory, operating, 1 Sep 2026, 6.37 h; the current v2 run gives
-# 0.0602 grid / 1,294 M / 2,078 deaths): population-weighted mean increment
+# 0.0593 grid (0.0594 district mean) / 1,290 M / 2,047 deaths): population-weighted mean increment
 # 0.0585 ug/m3 (grid); 1,234 M people >= 0.01; GEMM deaths 1,976 (checked in 16d).
 # If a v1 rerun comes out ~10% HIGHER than 0.0585, the original run most likely
 # fed metric tonnes under InMAP's "tons/year" (= short tons) — note it, don't "fix" it.

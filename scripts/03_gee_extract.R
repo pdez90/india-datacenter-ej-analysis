@@ -42,7 +42,7 @@ suppressPackageStartupMessages(library(rgee))
 # Earth Engine re-enables its deprecation warnings internally, so mute the printer itself
 reticulate::py_run_string("import warnings; warnings.filterwarnings('ignore'); warnings.showwarning = lambda *a, **k: None")
 
-gee_project <- Sys.getenv("GEE_PROJECT", unset = "ee-priyankadesouza")
+gee_project <- Sys.getenv("GEE_PROJECT", unset = "")   # your Earth Engine Cloud project; blank = the default credentials
 if (gee_project != "") ee_Initialize(project = gee_project, quiet = TRUE) else ee_Initialize(quiet = TRUE)
 
 CHUNK <- as.integer(Sys.getenv("GEE_CHUNK", unset = "25"))
@@ -130,7 +130,9 @@ todo <- if (length(only) && nzchar(only[1])) products[only] else products
 for (n in names(todo)) extract_product(n, todo[[n]])
 
 # ---- quick checks against the frozen / published values -----------------------------------
-gold <- as.data.table(st_drop_geometry(st_read(file.path(dir_data, "golden", "districts.geojson"), quiet = TRUE)))
+golden_f <- file.path(dir_data, "golden", "districts.geojson")   # authors' frozen reference layer (not released)
+if (!file.exists(golden_f)) { msg("skipping the check against the frozen layer: %s not found", golden_f); quit(save = "no", status = 0) }
+gold <- as.data.table(st_drop_geometry(st_read(golden_f, quiet = TRUE)))
 chk <- function(file, var, gvar) {
   f <- file.path(dir_gee, file); if (!file.exists(f)) return(NULL)
   m <- merge(fread(f)[, c("zone_uid", var), with = FALSE], gold[, c("zone_uid", gvar), with = FALSE], by = "zone_uid")
