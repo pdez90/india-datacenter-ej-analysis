@@ -106,7 +106,10 @@ if (startsWith(SENS, "w_")) {   # alternative operator-class capacity weights: l
 if (SENS == "unresolved_zero") {   # 25 Oct 2026: facilities the row-by-row review could not confirm or refute carry no load.
   # Their tonnes are removed from the load-state totals; every other facility keeps its baseline MW (no
   # recalibration to the 1,800 MW anchor), so this measures their contribution alone (data/public/unresolved_facilities_20261025.csv).
-  ur <- fread(file.path(dir_data, "public", "unresolved_facilities_20261025.csv"), colClasses = "character")
+  ur_f <- file.path(dir_data, "public", "unresolved_facilities_20261025.csv")   # authors' build file
+  if (!file.exists(ur_f)) ur_f <- file.path(dir_data, "unresolved_facilities.csv")   # the released list (companion app repo, data/)
+  assert(file.exists(ur_f), "unresolved_zero needs data/unresolved_facilities.csv from https://github.com/pdez90/india-datacentre-ej")
+  ur <- fread(ur_f, colClasses = "character")
   ci <- fread(out("dc_current_inventory.csv"))[, .(dc_id, facility_id)]
   mm <- merge(m, ci, by = "dc_id", all.x = TRUE); assert(!anyNA(mm$facility_id), "16b unresolved_zero: dc_id without facility_id")
   drop <- mm[facility_id %in% ur$facility_id]

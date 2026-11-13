@@ -13,8 +13,12 @@ where each is released.
 **What can be reproduced from public files.** The released facility table, the list of unresolved facilities and
 the app's derived tables are in the companion repository (below). Rebuilding the inventory itself needs the authors'
 build files (frozen inventory, corrections, additions, geocodes), which are not released (`DATA_SOURCES.md`); every
-correction and source they contain is reported row by row in the public facility table. From step 03 onward the
-pipeline runs on the external datasets plus a few small parameter tables, also listed in `DATA_SOURCES.md`.
+correction and source they contain is reported row by row in the public facility table. Every later step needs the
+facility list that step 01 builds from those files, and some steps also read small parameter tables that are
+available on request (grid parameters, the Solapur plant correction, Sengupta Table S4.3, the internet-exchange
+list; see `DATA_SOURCES.md`). The SI gives the grid parameters, the emission factors and the plant correction. The code is therefore released so that
+every step can be read and checked; a full rerun needs the files available on request. The unresolved-facility
+sensitivity reads the released list if it is copied to `data/unresolved_facilities.csv`.
 Comparisons against the authors' frozen reference layers (`data/golden/`) are skipped when those files are absent.
 
 The code that first assembled the inventory (directory download, operator census, cross-checks) was lost on
