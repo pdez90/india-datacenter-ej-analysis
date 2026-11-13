@@ -29,7 +29,7 @@ add("population of coal districts (million)", sum(cd$pop_2020, na.rm = TRUE) / 1
 top <- cd[order(-coal_mw)][1:5]
 for (i in 1:5) add(sprintf("coal capacity rank %d: %s (GW)", i, top$dist_name[i]), top$coal_mw[i] / 1000, c("11.2", "9.9", "9.2", "7.5", "6.4")[i])
 prof <- list(wealth_mean_2019 = c("83,500", "882,200"), rwi_mean = c("-0.12", "+0.41"), urban_share_2019 = c("30%", "70%"),
-             share_scst_2019 = c("36%", "25%"), share_bpl_2019 = c("52%", "31%"))
+             share_scst_2019 = c("38%", "27%"), share_bpl_2019 = c("52%", "31%"))
 for (v in names(prof)) {
   add(sprintf("%s, coal districts (capacity-weighted)", v), wm(cd[[v]], cd$coal_mw), prof[[v]][1])
   add(sprintf("%s, hosting districts (facility-weighted)", v), wm(hd[[v]], hd$dc_count), prof[[v]][2])

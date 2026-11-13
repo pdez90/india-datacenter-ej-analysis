@@ -19,12 +19,12 @@
 #
 # Coding (NFHS-5 PR recode):
 #   hv025 1 urban | hv206 0 no electricity | sh47 1 Hindu, 2 Muslim
-#   sh49 1 SC, 2 ST, 3 OBC, 4 none ("General"); denominators include missing and
-#        don't-know for the combined share_scst_2019 (reproduces the app layer
-#        exactly), but the single categories SC, ST, OBC and General use valid
-#        responses (1-4) as denominator: this reproduces Table 1's ST shares
-#        (0.046 / 0.148 / 0.080) and the SC/OBC subgroup burdens of 13_burden.
-#        The inconsistency is inherited from the original and noted in README.md (Known limitations).
+#   sh49 1 SC, 2 ST, 3 OBC, 4 none ("General"). Every caste share uses valid responses (1-4) as its
+#        denominator. Until 13 Nov 2026 the combined share_scst_2019 used all household members
+#        (missing and don't-know included; 5.4% of weighted members), as in the original app layer,
+#        while SC, ST, OBC and General used valid responses. An external review flagged the mixed
+#        denominators; v2 now uses valid responses throughout. v1 keeps the old definition so the
+#        submitted paper's numbers still reproduce. See README.md (Known limitations).
 #   sh75 BPL card 1 yes, 0 no, 8 don't know -> share among 0/1 only
 #   hv271 wealth-index factor score (5 implied decimals; kept in raw units)
 #   hv270 wealth quintile 1 poorest .. 5 richest
@@ -69,7 +69,7 @@ ses <- pr[, .(
   urban_share_2019     = wm(hv025 == 1, hv005),
   share_sc_2019        = { k <- sh49 %in% 1:4; wm(sh49[k] == 1, hv005[k]) },   # valid-response denominator
   share_st_2019        = { k <- sh49 %in% 1:4; wm(sh49[k] == 2, hv005[k]) },   # valid-response denominator (Table 1)
-  share_scst_2019      = wm(sh49 %in% 1:2, hv005),
+  share_scst_2019      = if (is_v1) wm(sh49 %in% 1:2, hv005) else { k <- sh49 %in% 1:4; wm(sh49[k] %in% 1:2, hv005[k]) },   # v2: valid-response denominator (13 Nov 2026)
   share_obc_2019       = { k <- sh49 %in% 1:4; wm(sh49[k] == 3, hv005[k]) },   # valid-response denominator
   share_general_2019   = { k <- sh49 %in% 1:4; wm(sh49[k] == 4, hv005[k]) },   # valid-response denominator
   share_hindu_2019     = wm(sh47 %in% 1, hv005),
