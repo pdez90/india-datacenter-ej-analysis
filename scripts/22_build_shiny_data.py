@@ -300,6 +300,21 @@ n_fac_none = sum(1 for r in pub if not r['source_url_archive'].strip() and not r
 n_dcm = sum(1 for r in src_rows if 'datacentermap.com' in r['url'])
 n_dcm_at = sum(1 for r in src_rows if 'datacentermap.com' in r['url'] and r['archive_service'] == 'archive.today')
 n_im_at = sum(1 for r in src_rows if 'indiamart' in r['url'] and r['archive_service'] == 'archive.today')
+# Every URL cited as evidence for a correction (correction_evidence), with the facilities whose correction cites it
+# and its archived copy. Corrections that need no outside evidence (district assignments, a figure moved between
+# fields) cite no URL and are not listed.
+ev_cites = defaultdict(set)
+for r in pub:
+    for u in re.findall(r'https?://\S+', r['correction_evidence']): ev_cites[u.rstrip('|,;')].add(r['facility_id'])
+ev_rows = []
+for u in sorted(ev_cites):
+    a = arch.get(u, {})
+    au = a.get('archive_url', '') if not (a.get('method') or '').startswith('failed') else ''
+    ev_rows.append(dict(url=u, cited_by_facility_ids=' '.join(sorted(ev_cites[u])), also_a_source_url='yes' if u in cites else 'no',
+                        archive_url=au, archive_service=service(au), archive_snapshot_date=snapdate(a) if au else '',
+                        archive_status=status(a.get('method', ''))))
+n_ev_arch = sum(1 for r in ev_rows if r['archive_url'])
+check(len(ev_rows) > 0 and all(r['url'] in arch for r in ev_rows), '22: every correction-evidence URL must have a row in source_archive.csv (run 25_archive_sources.py)')
 n_miss = len(src_rows) - n_arch
 
 readme = f"""India data-centre facility inventory (revised 30 September 2026)
@@ -323,8 +338,11 @@ india_datacentres_public.csv   {len(pub)} facilities, one row each: name, operat
                                URL(s) with archived copies, how each row was verified, confidence,
                                corrections and open issues, and the cross-check against the Atlas
                                of Data Center Politics. Site coordinates with their precision class.
-sources_and_archives.csv       every URL cited ({len(src_rows)}), the facilities that cite it, and its archived
-                               copy (Internet Archive or archive.today) with the snapshot date.
+sources_and_archives.csv       every source URL cited ({len(src_rows)}), the facilities that cite it, and its
+                               archived copy (Internet Archive or archive.today) with the snapshot date.
+correction_evidence_archives.csv
+                               every URL cited as evidence for a correction ({len(ev_rows)}), the facilities whose
+                               correction cites it, and its archived copy with the snapshot date.
 DATA.md                        data dictionary and methods: what a row is, where rows come from,
                                every column, how capacity was set, and the corrections made.
 power_interruptions_backup_diesel.csv (+ _README.txt)
@@ -335,12 +353,13 @@ emission_factors.csv (+ _README.txt)
 
 Archiving
 ---------
-{n_arch} of {len(src_rows)} cited URLs have an archived copy. {len(pub) - n_fac_none} of {len(pub)} facilities have at least one
+{n_arch} of {len(src_rows)} source URLs have an archived copy, and {n_ev_arch} of {len(ev_rows)} URLs cited as evidence for
+corrections.{'' if n_ev_arch == len(ev_rows) else f' The other {len(ev_rows) - n_ev_arch} evidence pages could not be archived: their sites blocked the archive or did not answer it.'} {len(pub) - n_fac_none} of {len(pub)} facilities have at least one
 archived source. Data Center Map pages the Internet Archive could not capture ({n_dcm_at} of {n_dcm}) and {n_im_at} IndiaMART
-pages were archived on archive.today by hand by 10 October 2026. {'The URL' if n_miss == 1 else f'The {n_miss} URLs'} without a copy {'is' if n_miss == 1 else 'are'} on Indian government or
+pages were archived on archive.today by hand by 10 October 2026. {'The source URL' if n_miss == 1 else f'The {n_miss} source URLs'} without a copy {'is' if n_miss == 1 else 'are'} on Indian government or
 company servers reachable only from Indian networks, so neither archive could capture {'it' if n_miss == 1 else 'them'}; {'it is' if n_miss == 1 else 'each is'} a facility's
 second source, and source_note in the facility table records what the authors hold for it. Links were checked and
-archived between 30 September and 20 October 2026.
+archived between 30 September and 13 November 2026.
 """
 bundle = os.path.join(APP, 'india_datacentres_documented.zip')
 with zipfile.ZipFile(bundle, 'w', zipfile.ZIP_DEFLATED) as z:
@@ -349,6 +368,8 @@ with zipfile.ZipFile(bundle, 'w', zipfile.ZIP_DEFLATED) as z:
     z.write(os.path.join(ROOT, 'india-datacentre-ej', 'DATA.md'), 'DATA.md')
     buf = io.StringIO(); w = csv.DictWriter(buf, fieldnames=list(src_rows[0].keys())); w.writeheader(); w.writerows(src_rows)
     z.writestr('sources_and_archives.csv', buf.getvalue())
+    buf = io.StringIO(); w = csv.DictWriter(buf, fieldnames=list(ev_rows[0].keys())); w.writeheader(); w.writerows(ev_rows)
+    z.writestr('correction_evidence_archives.csv', buf.getvalue())
     # the two documented download tables from scripts/30 (power interruptions -> backup diesel; emission factors); 30 runs before 22 in run_all
     for fn in ('power_interruptions_backup_diesel.csv', 'power_interruptions_backup_diesel_README.txt', 'emission_factors.csv', 'emission_factors_README.txt'):
         f30 = os.path.join(ROOT, 'outputs', 'public', fn)
@@ -356,7 +377,7 @@ with zipfile.ZipFile(bundle, 'w', zipfile.ZIP_DEFLATED) as z:
         z.write(f30, fn)
 
 print(f'22: wrote {APP}')
-print(f'  documented dataset: {os.path.basename(bundle)} ({os.path.getsize(bundle) // 1024} kB); {n_arch}/{len(src_rows)} cited URLs archived; '
+print(f'  documented dataset: {os.path.basename(bundle)} ({os.path.getsize(bundle) // 1024} kB); {n_arch}/{len(src_rows)} source URLs and {n_ev_arch}/{len(ev_rows)} correction-evidence URLs archived; '
       f'{n_fac_none} facilities with no archived source')
 print(f'  facilities {H["n_all"]} ({H["n_operating"]} operating, {H["n_construction"]} construction, {H["n_announced"]} announced); '
       f'hosting districts {H["hosting_districts_operating"]} / {H["hosting_districts_all"]}')
