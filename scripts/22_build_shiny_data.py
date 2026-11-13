@@ -299,6 +299,8 @@ n_arch = sum(1 for r in src_rows if r['archive_url'])
 n_fac_none = sum(1 for r in pub if not r['source_url_archive'].strip() and not r['source_url_2_archive'].strip())
 n_dcm = sum(1 for r in src_rows if 'datacentermap.com' in r['url'])
 n_dcm_at = sum(1 for r in src_rows if 'datacentermap.com' in r['url'] and r['archive_service'] == 'archive.today')
+n_im_at = sum(1 for r in src_rows if 'indiamart' in r['url'] and r['archive_service'] == 'archive.today')
+n_miss = len(src_rows) - n_arch
 
 readme = f"""India data-centre facility inventory (revised 30 September 2026)
 ================================================================
@@ -334,9 +336,9 @@ emission_factors.csv (+ _README.txt)
 Archiving
 ---------
 {n_arch} of {len(src_rows)} cited URLs have an archived copy. {len(pub) - n_fac_none} of {len(pub)} facilities have at least one
-archived source. Data Center Map pages the Internet Archive could not capture ({n_dcm_at} of {n_dcm}) and 5 IndiaMART
-pages were archived on archive.today by hand by 10 October 2026. The {len(src_rows) - n_arch} URLs without a copy are on Indian government and
-company servers reachable only from Indian networks, so neither archive could capture them; each is a facility's
+archived source. Data Center Map pages the Internet Archive could not capture ({n_dcm_at} of {n_dcm}) and {n_im_at} IndiaMART
+pages were archived on archive.today by hand by 10 October 2026. {'The URL' if n_miss == 1 else f'The {n_miss} URLs'} without a copy {'is' if n_miss == 1 else 'are'} on Indian government or
+company servers reachable only from Indian networks, so neither archive could capture {'it' if n_miss == 1 else 'them'}; {'it is' if n_miss == 1 else 'each is'} a facility's
 second source, and source_note in the facility table records what the authors hold for it. Links were checked and
 archived between 30 September and 20 October 2026.
 """
