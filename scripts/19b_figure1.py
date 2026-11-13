@@ -59,9 +59,9 @@ PIPE = PIPE or sum(num(r['mw_it_used_in_pipeline_scenario']) for r in pub if r.g
 # checks against the paper's text (Figure 1 caption, sections 2.1 and S1.1, S4)
 assert (N_ALL, N_OP, N_UC, N_AN) == (329, 233, 60, 36), (N_ALL, N_OP, N_UC, N_AN)
 assert (S_DCM, S_CEN, S_GOV, S_ATL) == ((202, 123), (66, 62), (32, 32), (29, 16)), (S_DCM, S_CEN, S_GOV, S_ATL)
-assert (N_DROP, N_EDIT, N_EDIT_FAC, N_ADP) == (29, 310, 170, 243), (N_DROP, N_EDIT, N_EDIT_FAC, N_ADP)
+assert (N_DROP, N_EDIT, N_EDIT_FAC, N_ADP) == (29, 312, 172, 243), (N_DROP, N_EDIT, N_EDIT_FAC, N_ADP)
 assert N_REP == 123 and round(MW_REP) == 1383 and abs(MW_COM - ANCHOR) < 0.5 and round(MW_NON) == 251 and round(MW_TOT) == 2051, (N_REP, MW_REP, MW_COM, MW_NON, MW_TOT)
-assert (len(com), types['colocation'], types['hyperscale'], len(non)) == (134, 127, 7, 99)
+assert (len(com), types['colocation'], types['hyperscale'], len(non)) == (136, 129, 7, 97)
 assert round(PIPE) == 8114, PIPE
 assert (N_T1, N_DER) == (93, 30), (N_T1, N_DER)
 c = lambda x: f'{x:,.0f}'

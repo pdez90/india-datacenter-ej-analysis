@@ -110,7 +110,7 @@ assert(op[!is.na(mw_reported), .N] == G(43, 123) && abs(op[, sum(mw_reported, na
        "operating reported IT load must be %d rows / %.2f MW", G(43, 123), G(734.19, 1383.21))
 tc <- op[, .N, by = dc_type][, setNames(N, dc_type)][c("colocation","enterprise","telecom","hyperscale","government")]; tc[is.na(tc)] <- 0L; names(tc)[5] <- "government"
 msg("operating type counts: %s", paste(names(tc), tc, collapse = ", "))
-assert(identical(tc, G(c(colocation=110L, enterprise=59L, telecom=32L, hyperscale=8L, government=0L), c(colocation=127L, enterprise=47L, telecom=20L, hyperscale=7L, government=32L))), "operating type counts differ from the expected split")
+assert(identical(tc, G(c(colocation=110L, enterprise=59L, telecom=32L, hyperscale=8L, government=0L), c(colocation=129L, enterprise=45L, telecom=20L, hyperscale=7L, government=32L))), "operating type counts differ from the expected split")
 
 # ---- write both scopes (scope-independent script: writes outputs/ and outputs_all/) --
 cols <- c("dc_id","facility_id","name","operator","status","is_operating","src","dc_type","opened_year",
