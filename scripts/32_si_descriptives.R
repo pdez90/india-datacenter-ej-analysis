@@ -2,7 +2,7 @@
 # 32_si_descriptives.R  —  SI numbers that are derived from pipeline outputs rather than
 # produced by a modelling step (operating inventory):
 #   A. SI S4: capacity-weighted profile of the coal-generating districts vs the facility-weighted
-#      hosting districts (133 districts, 414 M people; Singrauli ... Korba; wealth 84,400 = 53rd pct).
+#      hosting districts (133 districts, 414 M people; Singrauli ... Korba; wealth 83,400 = 53rd pct).
 #   B. SI S4: electricity-related water at the thermal marginal mix (92% coal, 8% gas; coal 3.0 and
 #      gas 0.92 L/kWh, Table S4.2) instead of the average grid (73.7 -> 57.0 GL/yr).
 #   C. SI S4: unweighted mean of the ten season-period Sengupta factors vs the flat-load factors
@@ -28,7 +28,7 @@ add("coal districts (any coal capacity)", nrow(cd), "133")
 add("population of coal districts (million)", sum(cd$pop_2020, na.rm = TRUE) / 1e6, "414")
 top <- cd[order(-coal_mw)][1:5]
 for (i in 1:5) add(sprintf("coal capacity rank %d: %s (GW)", i, top$dist_name[i]), top$coal_mw[i] / 1000, c("11.2", "9.9", "9.2", "7.5", "6.4")[i])
-prof <- list(wealth_mean_2019 = c("83,500", "882,200"), rwi_mean = c("-0.12", "+0.41"), urban_share_2019 = c("30%", "70%"),
+prof <- list(wealth_mean_2019 = c("83,400", "882,200"), rwi_mean = c("-0.12", "+0.41"), urban_share_2019 = c("30%", "70%"),
              share_scst_2019 = c("38%", "27%"), share_bpl_2019 = c("52%", "31%"))
 for (v in names(prof)) {
   add(sprintf("%s, coal districts (capacity-weighted)", v), wm(cd[[v]], cd$coal_mw), prof[[v]][1])
