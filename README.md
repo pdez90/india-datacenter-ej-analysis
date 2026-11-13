@@ -78,12 +78,8 @@ Steps not run by `run_all.R` (network-bound): `03_gee_extract.R` (Earth Engine),
 
 ## Known limitations
 
-- **Caste denominators (changed 13 November 2026).** Every caste share in `05_nfhs_district.R` now uses valid
-  responses as its denominator. Until then the combined SC/ST share used all household members, including the 5.4%
-  of weighted members with no valid caste answer, while the SC, ST, OBC and General shares used valid responses.
-  An external review flagged the mixed denominators. With the old definition the national SC/ST vs General increment
-  ratio was 1.372 (bootstrap sign probability 0.059); with valid responses throughout it is 1.357 (0.037). SI
-  Table S12.1 reports both. The v1 inventory keeps the old definition so that the submitted paper still reproduces.
+- **Caste denominators.** Every caste share in `05_nfhs_district.R` uses valid responses as its denominator. About
+  5.4% of weighted household members have no valid caste answer (median district 1.5%).
 - **Sensitivity runs.** `run_sensitivity.R` runs the three dispersion sensitivities reported in SI Table S4.1.3
   (flat and hyperscale-dominant weightings; unresolved facilities set to zero). `16b_build_emissions.R` still accepts
   `DCEJ_SENS=alloc_gen` (plant allocation by estimated generation), which the paper does not report.

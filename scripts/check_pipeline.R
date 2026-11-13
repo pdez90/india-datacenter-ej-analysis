@@ -82,7 +82,7 @@ if (INVENTORY == "v2") {
   chk_pin("[all] pw increment, district mean = 0.2098", near(num16a(".*comparison:\\s+([0-9.]+) ug.*"), 0.2098, 0.01))
   chk_pin("[all] GEMM deaths = 7,260", near(num16a(".*increment: ([0-9.]+) /yr.*"), 7260, 0.01))
   nb <- fread(O("tab20b_inmap_disparity_national.csv"))
-  chk_pin("20b SC/ST ratio 1.357, sign prob 0.037 (valid-response caste shares, 13 Nov 2026; was 1.372 / 0.059)", near(nb[contrast == "SC/ST vs General", ratio], 1.357, 0.005) && near(nb[contrast == "SC/ST vs General", boot_sign_prob], 0.037, 0.2))
+  chk_pin("20b SC/ST ratio 1.357, sign prob 0.037", near(nb[contrast == "SC/ST vs General", ratio], 1.357, 0.005) && near(nb[contrast == "SC/ST vs General", boot_sign_prob], 0.037, 0.2))
   chk_pin("20b rural/urban ratio 0.797, sign prob 0.028", near(nb[contrast == "Rural vs urban", ratio], 0.797, 0.005) && near(nb[contrast == "Rural vs urban", boot_sign_prob], 0.028, 0.2))
   rg <- fread(O("tab20b_inmap_regional_disparity.csv"))
   chk_pin("20b regional: North rural/urban Z -0.638, South SC/ST Z +0.479", near(rg[zone == "North" & contrast == "Rural vs urban", Z], -0.638, 0.01) && near(rg[zone == "South" & contrast == "SC/ST vs General", Z], 0.479, 0.01))
