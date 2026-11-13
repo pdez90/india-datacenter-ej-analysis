@@ -129,6 +129,58 @@ if (INVENTORY == "v2" && all(file.exists(O(paste0("tab16_inmap_summary_", names(
   }
 }
 
+# ---- 2d. internal consistency of the facility data (added 13 Nov 2026) --------------------------------------
+# Each check compares the data with themselves, not with a pinned number, so it catches inconsistencies that
+# number-matching cannot (e.g. one operator's facilities split across classes, found 13 Nov 2026 for Ishan).
+local({
+  pub_f <- outp(file.path("public", "india_datacentres_public.csv"), "operating")
+  if (!file.exists(pub_f)) { add("2d public table present", "MISSING"); return(invisible()) }
+  pub <- fread(pub_f, colClasses = "character", na.strings = NULL)
+  inv <- fread(A("dc_current_inventory.csv"), colClasses = "character", na.strings = NULL)
+  num <- function(x) suppressWarnings(as.numeric(x))
+  norm_op <- function(o) {
+    o <- tolower(o)
+    o <- gsub("[.,()&/]", " ", o)
+    o <- gsub("\\b(pvt|private|ltd|limited|llp|inc|india|technologies|technology|services|solutions|the|co|corp|corporation|and)\\b", " ", o)
+    trimws(gsub("\\s+", " ", o))
+  }
+  # (a) every operator's facilities share one class
+  pub[, op_key := norm_op(operator)]
+  mixed <- pub[, .(n_class = uniqueN(facility_type), classes = paste(sort(unique(facility_type)), collapse = "/")), by = op_key][n_class > 1]
+  chk("2d each operator's facilities share one class", nrow(mixed) == 0,
+      if (nrow(mixed)) paste(mixed$op_key, mixed$classes, collapse = "; ") else "")
+  # (b) public table agrees with the analysis inventory (ids, class, operator, coordinates, district)
+  m <- merge(pub[, .(facility_id, facility_type, operator, latitude, longitude, district_2015)],
+             inv[, .(facility_id, dc_type, op_inv = operator, lat, lon, dist_name)], by = "facility_id", all = TRUE)
+  bad <- m[is.na(facility_type) | is.na(dc_type) | facility_type != dc_type | operator != op_inv | district_2015 != dist_name |
+           abs(num(latitude) - num(lat)) > 1e-4 | abs(num(longitude) - num(lon)) > 1e-4]
+  chk("2d public table = analysis inventory (id, class, operator, point, district)", nrow(bad) == 0, paste(head(bad$facility_id, 10), collapse = " "))
+  # (c) capacity fields: not-sized rows are operating and carry 0 MW; build-out never below current
+  ns <- pub[grepl("^not sized", mw_method)]
+  chk("2d not-sized rows are operating with 0 MW and no published load",
+      all(ns$status == "operating") && all(num(ns$mw_it_used_in_paper) == 0) && all(ns$mw_it_reported_current == ""),
+      paste(ns[status != "operating" | num(mw_it_used_in_paper) != 0 | mw_it_reported_current != "", facility_id], collapse = " "))
+  bo <- pub[!is.na(num(mw_it_reported_current)) & !is.na(num(mw_it_reported_buildout)) & num(mw_it_reported_buildout) < num(mw_it_reported_current) - 1e-6]
+  chk("2d build-out never below the current load", nrow(bo) == 0, paste(bo$facility_id, collapse = " "))
+  # (d) class weight matches class (0 for not-sized rows)
+  W <- c(hyperscale = 10, colocation = 3, enterprise = 1, government = 1, telecom = 0.5)
+  cw <- pub[!grepl("^not sized", mw_method) & num(class_weight) != W[facility_type]]
+  chk("2d class weight matches class", nrow(cw) == 0, paste(cw$facility_id, collapse = " "))
+  # (e) app's unresolved list agrees with the public table (id, class)
+  uf <- file.path(ROOT, "india-datacentre-ej", "data", "unresolved_facilities.csv")
+  if (file.exists(uf)) {
+    u <- fread(uf, colClasses = "character")
+    um <- merge(u[, .(facility_id, facility_type)], pub[, .(facility_id, pt = facility_type)], by = "facility_id", all.x = TRUE)
+    chk("2d app unresolved list matches public table (id, class)", all(!is.na(um$pt)) && all(um$facility_type == um$pt),
+        paste(um[is.na(pt) | facility_type != pt, facility_id], collapse = " "))
+  }
+  # (f) no two building-precision rows of the same operator share a point
+  bp <- pub[location_precision == "building", .N, by = .(op_key, latitude, longitude)][N > 1]
+  known <- c("ctrls")                                  # CtrlS Mumbai DC1/DC2: two buildings on one plot (documented)
+  bp <- bp[!op_key %in% known]
+  chk("2d no same-operator building rows share a point (except documented CtrlS Mumbai DC1/DC2)", nrow(bp) == 0, paste(bp$op_key, collapse = "; "))
+})
+
 # ---- 3. headline snapshot ---------------------------------------------------------------------------
 num <- function(f, pat) { L <- readLines(f); as.numeric(sub(pat, "\\1", grep(pat, L, value = TRUE)[1])) }
 hv <- list(); H <- function(name, value, source) hv[[length(hv) + 1]] <<- data.table(name = name, value = value, source = source)
