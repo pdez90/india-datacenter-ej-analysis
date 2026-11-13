@@ -81,7 +81,9 @@ Steps not run by `run_all.R` (network-bound): `03_gee_extract.R` (Earth Engine),
 - **Caste denominators.** In `05_nfhs_district.R` the combined SC/ST share uses all household members as the
   denominator (including missing and don't-know responses), as in the original app layer, while the single-category
   shares (SC, ST, OBC, General) use valid responses only. The SC/ST-versus-General contrast therefore mixes the two
-  denominators. SI Table S12.1 states this.
+  denominators. About 5.4% of weighted household members have no valid caste response (median district 1.5%).
+  Using valid responses for the SC/ST share as well moves the SC/ST vs General increment ratio from 1.37 to 1.36
+  and the hosting-district contrast in SC/ST share from d = -0.62 to -0.60. SI Table S12.1 states this.
 - **Sensitivity runs.** `run_sensitivity.R` runs the three dispersion sensitivities reported in SI Table S4.1.3
   (flat and hyperscale-dominant weightings; unresolved facilities set to zero). `16b_build_emissions.R` still accepts
   `DCEJ_SENS=alloc_gen` (plant allocation by estimated generation), which the paper does not report.
