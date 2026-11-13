@@ -88,6 +88,12 @@ Steps not run by `run_all.R` (network-bound): `03_gee_extract.R` (Earth Engine),
   (flat and hyperscale-dominant weightings; unresolved facilities set to zero). `16b_build_emissions.R` still accepts
   `DCEJ_SENS=alloc_gen` (plant allocation by estimated generation), which the paper does not report.
 
+## Licence
+
+The code in this repository is released under the MIT License (`LICENSE`). The datasets it reads are not part of
+this repository and remain under their providers' terms (`DATA_SOURCES.md`). The public facility table in the
+companion repository is licensed separately under CC BY-NC 4.0.
+
 ## Contact
 
 Priyanka deSouza, University of Colorado Denver.
