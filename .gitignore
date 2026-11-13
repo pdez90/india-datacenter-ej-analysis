@@ -1,0 +1,15 @@
+data/
+outputs/
+outputs_all/
+outputs_v1/
+inmap_work/
+paper/
+tools/
+source_snapshots/
+india-datacentre-ej/
+_staging/
+*.bak_*
+__pycache__/
+.DS_Store
+.Rhistory
+.RData
