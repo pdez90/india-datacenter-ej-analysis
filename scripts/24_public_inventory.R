@@ -73,7 +73,7 @@ applied[field == "state_name_frozen", field := "state"]
 applied[field == "mw_reported", field := "current IT load (MW)"]
 applied[field == "mw_reported_buildout", field := "build-out IT load (MW)"]
 applied[field == "dc_type", field := "facility type"]
-applied <- applied[, .(correction_applied = paste(sprintf("%s: %s -> %s (%s)", field, fifelse(old_value == "", "blank", old_value), new_value, reason), collapse = " | "),
+applied <- applied[, .(correction_applied = paste(sprintf("%s: %s -> %s (%s)", field, fifelse(old_value == "", "blank", old_value), fifelse(new_value == "", "blank", new_value), reason), collapse = " | "),
                        correction_evidence = paste(unique(evidence_url[nzchar(evidence_url)]), collapse = " ")), by = facility_id]
 if (!"issue_status" %in% names(iss)) iss[, issue_status := "open"]
 open_iss <- iss[if (is_v1) TRUE else issue_status == "open",
@@ -94,8 +94,8 @@ lab_status <- c(operating = "operating", construction = "under construction", an
 ANCHOR_MW <- fread(outp("tab15_national.csv", "operating"))[scenario == "central", anchor_mw]
 mw_method <- function(basis, type, w, lam, mw) {
   arith <- sprintf("%s weight %s x %.2f MW per weight unit = %.2f MW", type, as.character(w), lam, mw)
-  fcase(basis == "reported", "published capacity used directly: IT load as published (tier T1) or derived from a published capacity by a stated rule (tiers T2-T5); the tier and any conversion are given at the start of mw_basis (data/public/CAPACITY_METHOD.md)",
-        grepl("^none", basis), "not sized: no published IT load, and the listing is not confirmed as a separate building with its own load (identity screen), so it is assigned 0 MW",
+  fcase(basis == "reported", "published capacity used directly: IT load as published (tier T1) or derived from a published capacity by a stated rule (tiers T2-T5); the tier and any conversion are given at the start of mw_basis (docs/CAPACITY_METHOD.md in the analysis repository)",
+        grepl("^none", basis), "not sized: no published IT load, and the listing is not confirmed as a separate building with its own load, so it is assigned 0 MW",
         grepl("derived", basis), paste0("modelled (no published IT load): ", arith,
                                         "; non-commercial facilities take the same MW per weight unit as commercial ones, without rescaling to any total"),
         basis == "anchored", paste0("modelled (no published IT load): ", arith, "; the MW per weight unit is set so that commercial (colocation and hyperscale) capacity sums to the ",
@@ -130,6 +130,9 @@ pub <- x[order(facility_id), .(
   correction_applied, correction_evidence, open_issue,
   inventory_version = "2026-09-30", licence = "CC BY-NC 4.0")]
 pub[is.na(adp_match), adp_match := "none"]
+pub[adp_match == "first_noticed_in_atlas", adp_match := "first noticed in the Atlas"]
+pub[adp_match == "matched_on_review", adp_match := "matched by hand"]
+pub[adp_match == "name+location", adp_match := "name and location"]
 
 # ---- source_note: the public text states what the sources say (figures, dates, disagreements, merged listings,
 # author-held copies). The working notes kept in inventory_sources_*.csv (review log) are replaced row by row by
@@ -193,7 +196,7 @@ pub[, mw_certainty := fcase(has_rep & !nz0(mw_flag) & !(nz0(open_issue) & grepl(
                             has_rep, "reported, but uncertain (see mw_note)",
                             default = "not published: modelled")]
 pub[, mw_note := fifelse(mw_method %like% "^not sized",
-  "No IT load is published, and the listing could not be confirmed as a separate building with its own load (identity screen), so it is assigned 0 MW: it counts as a facility but adds no capacity, electricity or emissions.",
+  "No IT load is published, and the listing could not be confirmed as a separate building with its own load, so it is assigned 0 MW: it counts as a facility but adds no capacity, electricity or emissions.",
   fifelse(
   mw_certainty == "not published: modelled",
     paste0(fifelse(status == "operating", "No current (live) IT load is published for this facility.", "No IT load is published for this facility."), " The MW used is modelled (class weight x ",
