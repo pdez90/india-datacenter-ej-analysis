@@ -73,6 +73,9 @@ applied[field == "state_name_frozen", field := "state"]
 applied[field == "mw_reported", field := "current IT load (MW)"]
 applied[field == "mw_reported_buildout", field := "build-out IT load (MW)"]
 applied[field == "dc_type", field := "facility type"]
+st_lab <- c(construction = "under construction", announced = "announced (planned)")
+applied[field == "status" & old_value %in% names(st_lab), old_value := st_lab[old_value]]
+applied[field == "status" & new_value %in% names(st_lab), new_value := st_lab[new_value]]
 applied <- applied[, .(correction_applied = paste(sprintf("%s: %s -> %s (%s)", field, fifelse(old_value == "", "blank", old_value), fifelse(new_value == "", "blank", new_value), reason), collapse = " | "),
                        correction_evidence = paste(unique(evidence_url[nzchar(evidence_url)]), collapse = " ")), by = facility_id]
 if (!"issue_status" %in% names(iss)) iss[, issue_status := "open"]
