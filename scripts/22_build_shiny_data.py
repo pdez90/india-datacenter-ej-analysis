@@ -354,12 +354,12 @@ emission_factors.csv (+ _README.txt)
 Archiving
 ---------
 {n_arch} of {len(src_rows)} source URLs have an archived copy, and {n_ev_arch} of {len(ev_rows)} URLs cited as evidence for
-corrections.{'' if n_ev_arch == len(ev_rows) else f' The other {len(ev_rows) - n_ev_arch} evidence pages could not be archived: their sites blocked the archive or did not answer it.'} {len(pub) - n_fac_none} of {len(pub)} facilities have at least one
+corrections.{'' if n_ev_arch == len(ev_rows) else (' The other evidence page could not be archived: its site blocks web archives or did not answer.' if len(ev_rows) - n_ev_arch == 1 else f' The other {len(ev_rows) - n_ev_arch} evidence pages could not be archived: their sites blocked the archive or did not answer it.')} {len(pub) - n_fac_none} of {len(pub)} facilities have at least one
 archived source. Data Center Map pages the Internet Archive could not capture ({n_dcm_at} of {n_dcm}) and {n_im_at} IndiaMART
 pages were archived on archive.today by hand by 10 October 2026. {'The source URL' if n_miss == 1 else f'The {n_miss} source URLs'} without a copy {'is' if n_miss == 1 else 'are'} on Indian government or
 company servers reachable only from Indian networks, so neither archive could capture {'it' if n_miss == 1 else 'them'}; {'it is' if n_miss == 1 else 'each is'} a facility's
 second source, and source_note in the facility table records what the authors hold for it. Links were checked and
-archived between 30 September and 13 November 2026.
+archived between 30 September and 15 November 2026.
 """
 bundle = os.path.join(APP, 'india_datacentres_documented.zip')
 with zipfile.ZipFile(bundle, 'w', zipfile.ZIP_DEFLATED) as z:
