@@ -57,6 +57,12 @@ x <- merge(x, fac_all, by = "k", all.x = TRUE)
 assert(x[status == "operating", all(!is.na(mw_it_paper))] && all(!is.na(x$mw_it_scenario)), "facility MW join failed")
 x <- merge(x, src, by = "facility_id", all.x = TRUE)
 x <- merge(x, adp, by = "facility_id", all.x = TRUE)
+# public form of the retrieval dates: first retrieval and latest check
+retrieved_public <- function(v) vapply(v, function(t) {
+  d <- sort(unique(regmatches(t, gregexpr("[0-9]{4}-[0-9]{2}-[0-9]{2}", t))[[1]]))
+  if (!length(d)) return(t)
+  if (length(d) == 1) sprintf("retrieved %s", d) else sprintf("retrieved %s; last checked %s", d[1], d[length(d)])
+}, character(1), USE.NAMES = FALSE)
 # corrections applied vs issues still open (unverifiable figures, items to verify)
 applied <- if (is_v1) cor[0] else cor[field != "_drop"]
 # public labels for the corrected fields
@@ -64,6 +70,9 @@ applied[field == "lon", field := "longitude"]
 applied[field == "lat", field := "latitude"]
 applied[field == "dist_name_frozen", field := "district"]
 applied[field == "state_name_frozen", field := "state"]
+applied[field == "mw_reported", field := "current IT load (MW)"]
+applied[field == "mw_reported_buildout", field := "build-out IT load (MW)"]
+applied[field == "dc_type", field := "facility type"]
 applied <- applied[, .(correction_applied = paste(sprintf("%s: %s -> %s (%s)", field, fifelse(old_value == "", "blank", old_value), new_value, reason), collapse = " | "),
                        correction_evidence = paste(unique(evidence_url[nzchar(evidence_url)]), collapse = " ")), by = facility_id]
 if (!"issue_status" %in% names(iss)) iss[, issue_status := "open"]
@@ -113,8 +122,10 @@ pub <- x[order(facility_id), .(
                       mw_method(capacity_basis_all, dc_type, class_weight_used, lambda_used, mw_it_scenario)),
   source_url, source_url_archive = arch_of(source_url), source_title, source_type,
   source_url_2, source_url_2_archive = arch_of(source_url_2), source_title_2, source_type_2,
-  source_verification = verification, url_checked, status_in_source, status_agrees_with_inventory = status_agrees,
-  source_note, sources_retrieved = retrieved,
+  source_verification = verification,
+  url_checked = fifelse(url_checked == "fetched", "page read", fifelse(url_checked == "search_result", "search result only", url_checked)),
+  status_in_source, status_agrees_with_inventory = status_agrees,
+  source_note, sources_retrieved = retrieved_public(retrieved),
   adp_match, adp_campus_name = adp_name, adp_status, adp_stage, adp_size_bucket, adp_source_urls = adp_urls,
   correction_applied, correction_evidence, open_issue,
   inventory_version = "2026-09-30", licence = "CC BY-NC 4.0")]

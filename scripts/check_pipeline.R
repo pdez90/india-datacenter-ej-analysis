@@ -93,7 +93,7 @@ if (INVENTORY == "v2") {
   s29 <- readLines(O("tab29_diesel_summary.txt"))
   chk_pin("29 diesel NOx 5.64% central, 5.26% zero-fill", any(grepl("5\\.64%", s29)) && any(grepl("5\\.26%", s29)))
   wd <- fread(O("tab13b_water_demand.csv")); chk("13b 144 of 233 facilities in extremely high stress", any(wd$n_ext_high == 144, na.rm = TRUE))
-  t17 <- fread(O("tab17e_confidence_sensitivity.csv")); chk("17e high-confidence sensitivity (40 districts / 119 facilities)", nrow(t17) > 0 && t17$n_hosting_high[1] == 40 && t17$high_conf_facilities[1] == 119)
+  t17 <- fread(O("tab17e_confidence_sensitivity.csv")); chk("17e high-confidence sensitivity (41 districts / 129 facilities)", nrow(t17) > 0 && t17$n_hosting_high[1] == 41 && t17$high_conf_facilities[1] == 129)
   # cross-file identities
   chk("district deaths sum to the summary total", near(sum(d16$deaths, na.rm = TRUE), num16(".*increment: ([0-9.]+) /yr.*"), 0.005))
   rr <- fread(O("tab20b_inmap_regional.csv")); chk("regional India row = district-mean increment", near(rr[zone == "India", pw_increment], num16(".*comparison:\\s+([0-9.]+) ug.*"), 0.005))
