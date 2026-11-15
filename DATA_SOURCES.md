@@ -94,7 +94,7 @@ with precision class) is reported row by row in the public facility table.
 | File | Contents | Released | Script |
 |---|---|---|---|
 | `data/inventory_frozen_20260901.csv` | The inventory as it stood on 1 September 2026 (see README) | On request | 00b_inventory_v2.R |
-| `data/public/inventory_corrections_v2.csv` | 341 documented corrections (29 removals, 312 field edits), each with reason and evidence URL | Reported in the public table (`correction_applied`, `correction_evidence`); file on request | 00b_inventory_v2.R, 24_public_inventory.R |
+| `data/public/inventory_corrections_v2.csv` | 342 documented corrections (29 removals, 313 field edits), each with reason and evidence URL | Reported in the public table (`correction_applied`, `correction_evidence`); file on request | 00b_inventory_v2.R, 24_public_inventory.R |
 | `data/public/inventory_additions_v2.csv` | Facilities added after 1 September 2026, with sources | Rows are in the public table; file on request | 00b_inventory_v2.R |
 | `data/facility_geocodes_v2.csv` | Site geocode, address, method and precision for each facility | Coordinates and precision class are in the public table; file on request | 01_inventory.R |
 | `data/public/facility_district_changes_v2.csv` | District reassignments from the site geocodes | On request | 01_inventory.R |
