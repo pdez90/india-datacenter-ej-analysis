@@ -160,7 +160,7 @@ pub[, confidence := fcase(
   source_verification == "confirmed" & !nz0(open_issue), "high",
   default = "medium")]
 ver_note <- c(confirmed = "Facility documented by a source independent of the Data Center Map directory, with a second source.",
-              directory_only = "Listed in the Data Center Map directory only; no source independent of the directory documents this facility. Where a second URL is shown it is a general company or directory page that does not confirm this site.",
+              directory_only = "Listed in the Data Center Map directory; no source independent of listing sites confirms this facility's current status. Where a second URL is shown it is a listing, a network-registry record or a general company page.",
               single_source = "One independent source only (an operator, government, PeeringDB or press page). Where a second URL is shown it is another page from that same source.",
               partial = "Listed in Data Center Map; the operator confirms a data centre in this city, but not this exact building.",
               not_found = "No current source confirms this facility's reported capacity.")

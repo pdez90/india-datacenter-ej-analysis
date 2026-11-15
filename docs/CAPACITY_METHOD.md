@@ -27,7 +27,7 @@ state a basis. A figure that appears only on a listing site is never used for ca
 | Tier | Published | Rule | Flag text in `mw_flag` |
 |---|---|---|---|
 | T1 | Live IT load for this facility, labelled IT / critical IT / IT power | Used as published | none |
-| T2 | Live "operational capacity", "capacity" or MVA for this facility, basis not stated, from operator, filing, government or rating agency | Used as IT load; 1 MVA = 1 MW | "operational capacity ... basis not stated ... used as IT load (author decision 24 Oct 2026)" |
+| T2 | Live "operational capacity", "capacity" or MVA for this facility, basis not stated, from operator, filing, government or rating agency | Used as IT load; 1 MVA = 1 MW | "operational capacity ... basis not stated ... used as IT load (rule T2)" |
 | T3 | Total / facility / utility power for this facility only | IT = total power / 1.6 (the paper's PUE, so the conversion is the inverse of the one used to turn IT MW into electricity) | "derived from published total power at PUE 1.6" |
 | T4 | A company-wide or campus-wide figure with no split by facility | Facilities with their own figure (T1–T3) keep it; the remainder is apportioned equally across the operator's other operating facilities | "apportioned from a company-wide / campus figure" |
 | T5 | Rack count only (government and NIC data centres) | IT = racks x 4 kW. Installed or commissioned racks are used; a design or total rack capacity is used only when no installed count is published, and the flag says so | "derived from rack count at 4 kW per rack (installed / design)" |
