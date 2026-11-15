@@ -220,6 +220,20 @@ local({
   dup <- dup[!ids %in% c("IN026+IN027")]              # AWS Fab City A/B: one campus page; the open issue on IN027 records the possible duplicate
   chk("2d listing-site second source names the same facility (site code, building number, not shared)", length(wrong) == 0 && nrow(dup) == 0,
       paste(c(head(wrong, 8), head(dup$ids, 8)), collapse = "; "))
+  # (i) mw_basis agrees with the capacity columns (added 15 Nov 2026): a figure the basis calls current or build-out
+  # must equal the column, and a row that is not operating must carry no current load.
+  bas <- character(0)
+  firstnum <- function(x, pat) { m <- regmatches(x, gregexpr(pat, x, perl = TRUE))[[1]]; as.numeric(sub(pat, "\\1", m, perl = TRUE)) }
+  for (i in seq_len(nrow(pub))) {
+    b <- pub$mw_basis[i]; cur <- num(pub$mw_it_reported_current[i]); bo <- num(pub$mw_it_reported_buildout[i]); why <- character(0)
+    vb <- firstnum(b, "build-out[^0-9;]{0,14}?([0-9]+(?:\\.[0-9]+)?)\\+? MW")
+    vc <- firstnum(b, "(?<!no )current[^0-9;]{0,30}?\\(?([0-9]+(?:\\.[0-9]+)?) MW")
+    if (length(vb) && (is.na(bo) || any(abs(vb - bo) > 0.06))) why <- c(why, sprintf("basis build-out %s vs column %s", paste(vb, collapse = "/"), format(bo)))
+    if (length(vc) && (is.na(cur) || any(abs(vc - cur) > 0.06))) why <- c(why, sprintf("basis current %s vs column %s", paste(vc, collapse = "/"), format(cur)))
+    if (pub$status[i] != "operating" && !is.na(cur)) why <- c(why, "not operating but has a current load")
+    if (length(why)) bas <- c(bas, sprintf("%s (%s)", pub$facility_id[i], paste(why, collapse = "; ")))
+  }
+  chk("2d mw_basis agrees with the capacity columns; no current load on rows not operating", length(bas) == 0, paste(head(bas, 10), collapse = "; "))
 })
 
 # ---- 3. headline snapshot ---------------------------------------------------------------------------
