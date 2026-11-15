@@ -179,6 +179,47 @@ local({
   known <- c("ctrls")                                  # CtrlS Mumbai DC1/DC2: two buildings on one plot (documented)
   bp <- bp[!op_key %in% known]
   chk("2d no same-operator building rows share a point (except documented CtrlS Mumbai DC1/DC2)", nrow(bp) == 0, paste(bp$op_key, collapse = "; "))
+  # (g) free text agrees with the row it describes (added 15 Nov 2026): an open issue or unresolved-list entry must not
+  # state a status, a load or a class default that differs from the row's current values.
+  unit <- unique(round(num(pub[grepl("^modelled", mw_method), mw_it_used_in_paper]) / num(pub[grepl("^modelled", mw_method), class_weight]), 2))
+  W2 <- c(hyperscale = 10, colocation = 3, enterprise = 1, government = 1, telecom = 0.5)
+  txt <- pub[open_issue != "", .(facility_id, status, used = num(mw_it_used_in_paper), text = open_issue, where = "open_issue")]
+  if (file.exists(uf)) {
+    u2 <- fread(uf, colClasses = "character", na.strings = NULL)
+    u2 <- merge(u2[, .(facility_id, text = paste(reason, evidence_needed))], pub[, .(facility_id, status, used = num(mw_it_used_in_paper))], by = "facility_id")
+    txt <- rbind(txt, u2[, .(facility_id, status, used, text, where = "unresolved list")])
+  }
+  grab <- function(x, pat) { m <- regmatches(x, regexec(pat, x, perl = TRUE))[[1]]; if (length(m) > 1) m[2] else NA_character_ }
+  stale <- character(0)
+  for (i in seq_len(nrow(txt))) {
+    t <- txt$text[i]; s <- txt$status[i]; mw <- txt$used[i]; why <- character(0)
+    rec <- grab(t, "recorded as (operating|under construction|announced)")
+    if (!is.na(rec) && !startsWith(s, rec)) why <- c(why, sprintf("says recorded as %s", rec))
+    if (grepl("row is not operating|row does not enter the (operating )?baseline", t) && s == "operating") why <- c(why, "says not operating")
+    if (grepl("row carries 0 MW", t) && !isTRUE(mw == 0)) why <- c(why, "says 0 MW")
+    us <- grab(t, "row uses ([0-9.]+) MW")
+    if (!is.na(us) && !isTRUE(abs(as.numeric(us) - mw) < 0.01)) why <- c(why, sprintf("says row uses %s MW", us))
+    cd <- regmatches(t, regexec("([0-9.]+) MW (hyperscale|colocation|enterprise|government|telecom) class default", t, perl = TRUE))[[1]]
+    if (length(cd) == 3 && length(unit) == 1 && abs(as.numeric(cd[2]) - round(unit * W2[[cd[3]]], 2)) > 0.011) why <- c(why, sprintf("says %s class default %s MW", cd[3], cd[2]))
+    if (length(why)) stale <- c(stale, sprintf("%s (%s: %s; row is %s, %s MW)", txt$facility_id[i], txt$where[i], paste(why, collapse = ", "), s, format(mw)))
+  }
+  chk("2d open-issue and unresolved-list text agrees with the row (status, load, class default)", length(stale) == 0, paste(head(stale, 8), collapse = "; "))
+  # (h) a second source on a facility-listing site describes the same facility (added 15 Nov 2026): its URL must not
+  # carry a different site code (COK01 vs CLT01) or building number (#4 vs idc-3), and no two rows may share one.
+  ss <- pub[source_url_2 != "" & grepl("baxtel|datacenterhawk|inflect|cloudscene|ocolo|datacenters\\.com", source_url_2) & !grepl("/news/", source_url_2)]
+  codes <- function(x) { m <- regmatches(tolower(x), gregexpr("(?<![a-z0-9])[a-z]{3}0*[0-9]{1,2}(?![a-z0-9])", tolower(x), perl = TRUE))[[1]]; unique(sub("^([a-z]{3})0*", "\\1", m)) }
+  nums <- function(x) { y <- gsub("[a-z]", " ", tolower(x)); m <- regmatches(y, gregexpr("(?<![0-9.])[0-9]{1,2}(?![0-9.])", y, perl = TRUE))[[1]]; unique(as.integer(m)) }
+  wrong <- character(0)
+  for (i in seq_len(nrow(ss))) {
+    slug <- gsub("[/_.-]", " ", sub("^https?://[^/]+", "", ss$source_url_2[i])); nm <- ss$facility_name[i]
+    cu <- codes(slug); cn <- codes(nm); nu <- nums(slug); nn <- nums(nm)
+    if (length(cu) && length(cn) && !length(intersect(cu, cn))) wrong <- c(wrong, sprintf("%s (site code %s vs %s)", ss$facility_id[i], paste(cn, collapse = "/"), paste(cu, collapse = "/")))
+    else if (length(nu) && length(nn) && !length(intersect(nu, nn))) wrong <- c(wrong, sprintf("%s (building number %s vs %s)", ss$facility_id[i], paste(nn, collapse = "/"), paste(nu, collapse = "/")))
+  }
+  dup <- ss[, .(ids = paste(facility_id, collapse = "+"), N = .N), by = source_url_2][N > 1]
+  dup <- dup[!ids %in% c("IN026+IN027")]              # AWS Fab City A/B: one campus page; the open issue on IN027 records the possible duplicate
+  chk("2d listing-site second source names the same facility (site code, building number, not shared)", length(wrong) == 0 && nrow(dup) == 0,
+      paste(c(head(wrong, 8), head(dup$ids, 8)), collapse = "; "))
 })
 
 # ---- 3. headline snapshot ---------------------------------------------------------------------------
