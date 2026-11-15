@@ -234,6 +234,9 @@ assert(pub[mw_method %like% "^not sized" & status == "operating", all(mw_it_used
 
 dir.create(file.path(dir_out, "public"), showWarnings = FALSE)
 f <- file.path(dir_out, "public", "india_datacentres_public.csv")
+# quotation marks inside the input text arrive doubled; write them once
+chr_cols <- names(pub)[vapply(pub, is.character, logical(1))]
+pub[, (chr_cols) := lapply(.SD, function(x) gsub('""', '"', x, fixed = TRUE)), .SDcols = chr_cols]
 fwrite(pub, f)
 nz <- function(v) !is.na(v) & nzchar(v)
 msg("confidence: %s", pub[, paste(names(table(confidence)), table(confidence), collapse = ", ")])
