@@ -120,6 +120,14 @@ pub <- x[order(facility_id), .(
   inventory_version = "2026-09-30", licence = "CC BY-NC 4.0")]
 pub[is.na(adp_match), adp_match := "none"]
 
+# ---- source_note: the public text states what the sources say (figures, dates, disagreements, merged listings,
+# author-held copies). The working notes kept in inventory_sources_*.csv (review log) are replaced row by row by
+# data/public/source_notes_public.csv (one row per published facility; 14 Nov 2026).
+sn_pub <- fread(file.path(dir_pub, "source_notes_public.csv"), encoding = "UTF-8")
+assert(setequal(sn_pub$facility_id, pub$facility_id) && !anyDuplicated(sn_pub$facility_id) && all(nzchar(sn_pub$source_note)),
+       "source_notes_public.csv must hold exactly one non-empty note per published facility")
+pub[sn_pub, source_note := i.source_note, on = "facility_id"]
+
 # ---- source types: one controlled vocabulary (the verification sheets used free-text labels) ----------
 # directory | peeringdb | operator | government | press | press release | certification registry | contractor or vendor | other
 norm_type <- function(t, u) {
@@ -164,7 +172,7 @@ pub[, confidence_note := paste0(ver_note[source_verification],
   fifelse(nz0(mw_flag), paste0(" Capacity: ", mw_flag, "."), ""),
   fifelse(nz0(correction_applied), " Corrected during verification (see correction_applied and correction_evidence).", ""),
   fifelse(nz0(open_issue), paste0(" Open issue: ", open_issue), ""),
-  fifelse(inventory_source %like% "^operator, company|^government" & nz0(source_note), paste0(" Note: ", source_note), ""))]
+  "")]   # the facility's source_note is no longer repeated here (14 Nov 2026)
 pub[, confidence_note := trimws(gsub("\\.\\.", ".", confidence_note))]
 # ---- how certain the power (MW) figure is, in one column each row -------------------------------------
 # the figure that matters: operating rows use the current load; planned rows the build-out (or current)
